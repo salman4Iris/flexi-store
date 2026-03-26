@@ -20,7 +20,6 @@ function Home(): React.ReactNode {
       <Section>
         <HeroSlider />
       </Section>
-      <div className="bg-red-500 px-2 py-3">Test tailwind csss</div>
       {/* Featured Collections */}
       <Section>
         <CategoriesSection />

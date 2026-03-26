@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
+import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/Button";
 
 type Slide = {
   id: string;
@@ -12,35 +13,43 @@ type Slide = {
   category: string;
   categoryLabel: string;
   icon: string;
+  image: string;
 };
 
 const slides: Slide[] = [
   {
-    id: 'electronics',
-    title: 'Latest Tech Gadgets',
-    subtitle: 'Discover cutting-edge electronics and smart devices for modern living',
-    gradient: 'from-blue-50 to-indigo-50',
-    category: 'electronics',
-    categoryLabel: 'Electronics',
-    icon: '📱',
+    id: "electronics",
+    title: "Latest Tech Gadgets",
+    subtitle:
+      "Discover cutting-edge electronics and smart devices for modern living",
+    gradient: "from-blue-50 to-indigo-50",
+    category: "electronics",
+    categoryLabel: "Electronics",
+    icon: "📱",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=600&fit=crop",
   },
   {
-    id: 'fashion',
-    title: 'Trendy Fashion Collections',
-    subtitle: 'Explore exclusive clothing and accessories from top brands',
-    gradient: 'from-purple-50 to-pink-50',
-    category: 'fashion',
-    categoryLabel: 'Fashion',
-    icon: '👗',
+    id: "fashion",
+    title: "Trendy Fashion Collections",
+    subtitle: "Explore exclusive clothing and accessories from top brands",
+    gradient: "from-purple-50 to-pink-50",
+    category: "fashion",
+    categoryLabel: "Fashion",
+    icon: "👗",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
   },
   {
-    id: 'home',
-    title: 'Home & Living Essentials',
-    subtitle: 'Transform your space with our curated furniture and decor',
-    gradient: 'from-green-50 to-emerald-50',
-    category: 'home',
-    categoryLabel: 'Home & Living',
-    icon: '🏠',
+    id: "home",
+    title: "Home & Living Essentials",
+    subtitle: "Transform your space with our curated furniture and decor",
+    gradient: "from-green-50 to-emerald-50",
+    category: "home",
+    categoryLabel: "Home & Living",
+    icon: "🏠",
+    image:
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop",
   },
 ];
 
@@ -61,12 +70,15 @@ export function HeroSlider(): React.ReactNode {
   }, []);
 
   // Handle slide change with transition
-  const handleSlideChange = useCallback((slideIndex: number) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrentSlide(slideIndex);
-    setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
-  }, [isTransitioning]);
+  const handleSlideChange = useCallback(
+    (slideIndex: number) => {
+      if (isTransitioning) return;
+      setIsTransitioning(true);
+      setCurrentSlide(slideIndex);
+      setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
+    },
+    [isTransitioning],
+  );
 
   const slide = slides[currentSlide];
 
@@ -84,13 +96,29 @@ export function HeroSlider(): React.ReactNode {
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
 
+      {/* Product Image */}
+      <div className="absolute right-0 top-0 w-1/2 h-full hidden md:block overflow-hidden">
+        <div className="relative w-full h-full">
+          <Image
+            src={slide.image}
+            alt={slide.categoryLabel}
+            fill
+            className={`object-cover transition-opacity duration-500 ease-in-out ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+            priority
+          />
+          {/* Image fade overlay */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white opacity-60 z-10"></div>
+        </div>
+      </div>
+
       {/* Slide content with fade animation */}
       <div
-        className={`relative z-10 max-w-2xl mx-auto text-center px-4 transition-opacity duration-500 ease-in-out ${
-          isTransitioning ? 'opacity-0' : 'opacity-100'
+        className={`relative z-10 max-w-2xl mx-auto text-center px-4 transition-opacity duration-500 ease-in-out md:text-left md:ml-0 md:max-w-xl ${
+          isTransitioning ? "opacity-0" : "opacity-100"
         }`}
       >
-        <div className="text-9xl mb-6 drop-shadow-lg">{slide.icon}</div>
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
           {slide.title}
         </h1>
@@ -125,8 +153,8 @@ export function HeroSlider(): React.ReactNode {
             aria-label={`Go to slide ${index + 1}`}
             className={`transition-all duration-300 rounded-full ${
               index === currentSlide
-                ? 'bg-gray-900 w-8 h-3'
-                : 'bg-gray-300 w-3 h-3 hover:bg-gray-600'
+                ? "bg-gray-900 w-8 h-3"
+                : "bg-gray-300 w-3 h-3 hover:bg-gray-600"
             }`}
             disabled={isTransitioning}
           />
@@ -135,7 +163,9 @@ export function HeroSlider(): React.ReactNode {
 
       {/* Navigation arrows (optional) */}
       <button
-        onClick={() => handleSlideChange((currentSlide - 1 + slides.length) % slides.length)}
+        onClick={() =>
+          handleSlideChange((currentSlide - 1 + slides.length) % slides.length)
+        }
         className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 text-gray-900 p-3 rounded-full transition-colors disabled:opacity-50"
         aria-label="Previous slide"
         disabled={isTransitioning}

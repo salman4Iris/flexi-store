@@ -1,0 +1,7 @@
+/* themes/default/tokens.css */
+:root {
+  --color-primary: #111111;
+  --color-bg: #ffffff;
+  --color-text: #222222;
+  --radius: 10px;
+}

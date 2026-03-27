@@ -54,7 +54,7 @@ export default function OrdersPage() {
                       <div>
                         <div className="font-semibold text-lg">Order #{o.id}</div>
                         <div className="text-sm text-muted-foreground mt-1">
-                          {new Date(o.createdAt).toLocaleString()}
+                          {new Date(o.createdAt).toLocaleString("en-IN", { timeZone: "UTC" })}
                         </div>
                       </div>
                       <div className="text-right">

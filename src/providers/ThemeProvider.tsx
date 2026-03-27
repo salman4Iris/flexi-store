@@ -11,6 +11,12 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const themeNames: ThemeName[] = ["default", "luxury", "minimal"];
+
+function isThemeName(value: string): value is ThemeName {
+  return themeNames.includes(value as ThemeName);
+}
+
 const themes: Record<ThemeName, Record<string, string>> = {
   default: {
     "--color-primary": "#111111",
@@ -39,14 +45,16 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeName>(() => {
+  const [theme, setThemeState] = useState<ThemeName>(ACTIVE_THEME);
+
+  useEffect(() => {
     try {
-      const stored = localStorage.getItem("flexi-theme") as ThemeName | null;
-      return stored ?? ACTIVE_THEME;
-    } catch {
-      return ACTIVE_THEME;
-    }
-  });
+      const storedTheme = localStorage.getItem("flexi-theme");
+      if (storedTheme && isThemeName(storedTheme)) {
+        setThemeState(storedTheme);
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

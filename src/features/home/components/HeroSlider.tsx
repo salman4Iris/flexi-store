@@ -83,10 +83,10 @@ export function HeroSlider(): React.ReactNode {
   const slide = slides[currentSlide];
 
   return (
-    <div className="relative min-h-[500px] flex items-center justify-center overflow-hidden rounded-lg">
+    <div className="relative min-h-125 flex items-center justify-center overflow-hidden rounded-lg">
       {/* Animated background gradient */}
       <div
-        className={`absolute inset-0 transition-all duration-500 ease-in-out bg-gradient-to-r ${slide.gradient}`}
+        className={`absolute inset-0 transition-all duration-500 ease-in-out bg-linear-to-r ${slide.gradient}`}
         key={slide.id}
       />
 
@@ -103,13 +103,14 @@ export function HeroSlider(): React.ReactNode {
             src={slide.image}
             alt={slide.categoryLabel}
             fill
+            sizes="(max-width: 767px) 0px, 50vw"
             className={`object-cover transition-opacity duration-500 ease-in-out ${
               isTransitioning ? "opacity-0" : "opacity-100"
             }`}
             priority
           />
           {/* Image fade overlay */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white opacity-60 z-10"></div>
+          <div className="absolute inset-0 bg-linear-to-l from-transparent to-white opacity-60 z-10"></div>
         </div>
       </div>
 

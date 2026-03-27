@@ -19,7 +19,7 @@ export type ProductCardProps = {
 
 function formatPrice(value: number, currency = "INR") {
   try {
-    return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(value);
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency }).format(value);
   } catch {
     return `${value}`;
   }

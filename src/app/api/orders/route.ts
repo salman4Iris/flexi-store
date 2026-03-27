@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Invalid payload' }, { status: 400 });
     }
 
-    const order = createOrder(userId, items, total);
+    const order = await createOrder(userId, items, total);
     return NextResponse.json({ order }, { status: 201 });
   } catch (err) {
     return NextResponse.json({ message: 'Invalid request' }, { status: 400 });
@@ -31,6 +31,6 @@ export async function GET(req: Request) {
   const userId = extractUserIdFromAuth(auth);
   if (!userId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-  const data = listOrders(userId);
+  const data = await listOrders(userId);
   return NextResponse.json(data);
 }

@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/providers/AuthProvider';
 
 export default function RegisterPage() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,6 +24,18 @@ export default function RegisterPage() {
         e.preventDefault();
         setError('');
         setLoading(true);
+
+        if (!firstName.trim()) {
+            setError('First name is required');
+            setLoading(false);
+            return;
+        }
+
+        if (!lastName.trim()) {
+            setError('Last name is required');
+            setLoading(false);
+            return;
+        }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             setError('Please enter a valid email');
@@ -56,6 +70,13 @@ export default function RegisterPage() {
                 // auto-login if token returned
                 if (data.token) {
                     login(data.token, data.user);
+                    // persist name in localStorage
+                    try {
+                        localStorage.setItem(
+                            `profile_${data.user.id}`,
+                            JSON.stringify({ firstName: firstName.trim(), lastName: lastName.trim() })
+                        );
+                    } catch {}
                     router.push('/');
                 } else {
                     router.push('/auth/login');
@@ -77,6 +98,26 @@ export default function RegisterPage() {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="First Name"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="Last Name"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
                                 <div className="space-y-2">
                                     <Input
                                         type="email"

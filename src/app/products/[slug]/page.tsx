@@ -1,87 +1,80 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from 'react';
-import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { notFound, useParams } from 'next/navigation';
+import { useProduct } from '@/features/products/hooks/useProduct';
+import { ProductDetails } from '@/features/products/components/ProductDetails';
 import Container from '@/components/layout/Container';
 import Section from '@/components/layout/Section';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useCart } from '@/store/cart';
 
-type Product = { id: string; name: string; price: number; image: string; description?: string };
+export default function ProductDetailPage(): React.ReactNode {
+  const params = useParams();
+  const slug = Array.isArray(params.slug) ? params.slug[0] : (params.slug as string || '');
+  
+  if (!slug) {
+    return notFound();
+  }
 
-export default function ProductDetail({ params }: { params: { slug: string } }) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { product, loading, error } = useProduct(slug);
 
-  useEffect(() => {
-    let mounted = true;
-    fetch(`/api/products/${params.slug}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (mounted && !data?.message) setProduct(data);
-        else if (mounted) setProduct(null);
-      })
-      .catch(() => setProduct(null))
-      .finally(() => mounted && setLoading(false));
-    return () => {
-      mounted = false;
-    };
-  }, [params.slug]);
+  if (loading) {
+    return (
+      <Container>
+        <Section>
+          <div className="flex justify-center items-center h-96">
+            <div className="text-center space-y-4">
+              <div className="animate-pulse">
+                <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+                  <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Section>
+      </Container>
+    );
+  }
 
-  const { add } = useCart();
-  const [adding, setAdding] = useState(false);
-
-  const handleAddToCart = async () => {
-    if (adding || !product) return;
-    setAdding(true);
-    try {
-      add({ id: product.id, name: product.name, price: product.price });
-    } finally {
-      setTimeout(() => setAdding(false), 300);
-    }
-  };
-
-  if (loading) return (
-    <Container>
-      <Section>
-        <p className="text-center text-muted-foreground">Loading...</p>
-      </Section>
-    </Container>
-  );
-  if (!product) return notFound();
+  if (!product || error) {
+    return notFound();
+  }
 
   return (
     <Container>
       <Section>
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <img src={product.image} alt={product.name} className="w-full rounded-lg" />
-            </div>
-            <Card>
-              <CardContent className="pt-6 space-y-6">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-                  <p className="text-2xl font-semibold text-primary">₹{product.price}</p>
-                </div>
-                <div>
-                  <p className="text-gray-700 leading-relaxed">{product.description}</p>
-                </div>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={adding}
-                    className="flex-1"
-                  >
-                    {adding ? 'Adding...' : 'Add to Cart'}
-                  </Button>
-                  <Button variant="outline" className="flex-1">
-                    Save for Later
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <Link
+            href={`/products?category=${product.category}`}
+            className="hover:text-primary transition-colors capitalize"
+          >
+            {product.category}
+          </Link>
+          <span>/</span>
+          <span className="text-primary font-medium">{product.name}</span>
+        </div>
+
+        {/* Product Content */}
+        <ProductDetails product={product} />
+
+        {/* Related Products Section */}
+        <div className="mt-16 pt-8 border-t border-gray-200">
+          <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-100 rounded-lg h-48 flex items-center justify-center text-muted-foreground"
+              >
+                Related Product {i}
+              </div>
+            ))}
           </div>
         </div>
       </Section>

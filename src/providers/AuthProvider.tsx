@@ -25,6 +25,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<User>(null);
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (u) setUser(JSON.parse(u));
     } catch {}
     setReady(true);
+    setIsHydrated(true);
   }, []);
 
   const login = (t: string, u: User) => {

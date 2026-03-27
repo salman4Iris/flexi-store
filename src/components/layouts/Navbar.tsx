@@ -38,7 +38,8 @@ export default function Navbar(): React.ReactElement {
   const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState<boolean>(true);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function Navbar(): React.ReactElement {
     };
     handleResize();
     window.addEventListener("resize", handleResize);
+    setIsHydrated(true);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -79,7 +81,7 @@ export default function Navbar(): React.ReactElement {
       <Container className="py-4">
         <div className="flex items-center justify-between gap-6">
           {/* Logo & Mobile Menu Button */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4" suppressHydrationWarning>
             {!isDesktop && (
               <Button
                 variant="ghost"
@@ -109,6 +111,7 @@ export default function Navbar(): React.ReactElement {
               className="flex items-center gap-12"
               role="navigation"
               aria-label="Main navigation"
+              suppressHydrationWarning
             >
               {NAV_ITEMS.map((item) => (
                 <Link
@@ -125,7 +128,7 @@ export default function Navbar(): React.ReactElement {
 
           {/* Desktop Search */}
           {isDesktop && (
-            <form onSubmit={handleSearch} className="flex-1 max-w-xs">
+            <form onSubmit={handleSearch} className="flex-1 max-w-xs" suppressHydrationWarning>
               <div className="relative">
                 <Input
                   type="text"
@@ -150,7 +153,7 @@ export default function Navbar(): React.ReactElement {
           <div className="flex items-center gap-3">
             {/* Desktop User Menu */}
             {isDesktop && (
-              <>
+              <div suppressHydrationWarning>
                 {user ? (
                   <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-800">
                     <span className="text-sm font-medium text-[var(--color-text)]">
@@ -178,7 +181,7 @@ export default function Navbar(): React.ReactElement {
                     </Button>
                   </Link>
                 )}
-              </>
+              </div>
             )}
 
             {/* Cart Icon */}
@@ -220,6 +223,7 @@ export default function Navbar(): React.ReactElement {
             className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800 space-y-3"
             role="navigation"
             aria-label="Mobile navigation"
+            suppressHydrationWarning
           >
             {/* Mobile Search */}
             <form onSubmit={handleSearch} className="mb-4">

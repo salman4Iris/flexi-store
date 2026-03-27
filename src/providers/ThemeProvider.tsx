@@ -46,6 +46,7 @@ export function useTheme() {
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(ACTIVE_THEME);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     try {
@@ -54,9 +55,11 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
         setThemeState(storedTheme);
       }
     } catch {}
+    setIsHydrated(true);
   }, []);
 
   useEffect(() => {
+    if (!isHydrated) return;
     const root = document.documentElement;
     const vars = themes[theme] || themes.default;
     Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
@@ -64,7 +67,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     try {
       localStorage.setItem("flexi-theme", theme);
     } catch {}
-  }, [theme]);
+  }, [theme, isHydrated]);
 
   const setTheme = (t: ThemeName) => setThemeState(t);
   const toggle = () => setThemeState((s) => (s === "default" ? "luxury" : "default"));

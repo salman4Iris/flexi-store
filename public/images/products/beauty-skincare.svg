@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
+  <title id="title">Skincare set</title>
+  <desc id="desc">Stylized skincare bottles on a lavender background.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ede9fe"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" rx="48" fill="url(#bg)"/>
+  <circle cx="400" cy="380" r="240" fill="#faf5ff"/>
+  <rect x="245" y="300" width="110" height="250" rx="35" fill="#ffffff"/>
+  <rect x="280" y="255" width="40" height="60" rx="12" fill="#ddd6fe"/>
+  <rect x="370" y="340" width="100" height="210" rx="30" fill="#f5f3ff"/>
+  <rect x="500" y="280" width="90" height="270" rx="28" fill="#ffffff"/>
+  <circle cx="420" cy="300" r="42" fill="#a78bfa" opacity="0.55"/>
+  <circle cx="545" cy="250" r="22" fill="#c084fc" opacity="0.6"/>
+  <text x="50%" y="710" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#6d28d9">Beauty</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Books category</title>
+  <desc id="desc">Banner illustration of stacked books and a bookmark.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef2ff"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="36" fill="url(#bg)"/>
+  <rect x="260" y="470" width="420" height="60" rx="16" fill="#1e3a8a"/>
+  <rect x="300" y="395" width="380" height="58" rx="16" fill="#c2410c"/>
+  <rect x="340" y="320" width="340" height="58" rx="16" fill="#065f46"/>
+  <rect x="380" y="245" width="300" height="58" rx="16" fill="#7c3aed"/>
+  <path d="M860 220h110v210l-55-45-55 45z" fill="#fff" opacity="0.9"/>
+  <text x="600" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" fill="#3730a3">Books</text>
+</svg>

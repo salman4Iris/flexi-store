@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Electronics category</title>
+  <desc id="desc">Banner illustration of electronics devices.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="36" fill="url(#bg)"/>
+  <rect x="160" y="180" width="520" height="320" rx="28" fill="#0f172a"/>
+  <rect x="190" y="210" width="460" height="240" rx="18" fill="#1d4ed8" opacity="0.8"/>
+  <rect x="770" y="220" width="160" height="280" rx="34" fill="#111827"/>
+  <rect x="810" y="180" width="80" height="36" rx="16" fill="#334155"/>
+  <circle cx="1020" cy="390" r="120" fill="#eff6ff"/>
+  <path d="M955 390h130M1020 325v130" stroke="#2563eb" stroke-width="26" stroke-linecap="round"/>
+  <text x="600" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" fill="#1e3a8a">Electronics</text>
+</svg>

@@ -2,19 +2,13 @@
 
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
+import type { Product } from "@/features/products/types/product";
 
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  alt?: string;
-  originalPrice?: number;
-  discount?: number;
-  currency?: string;
+export type ProductGridProps = {
+  category?: string;
 };
 
-export default function ProductGrid() {
+export default function ProductGrid({ category }: ProductGridProps): React.ReactNode {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +17,12 @@ export default function ProductGrid() {
     let mounted = true;
     setLoading(true);
     setError(null);
-    fetch("/api/products")
+
+    const endpoint = category
+      ? `/api/products?category=${encodeURIComponent(category)}`
+      : "/api/products";
+
+    fetch(endpoint)
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load");
         return r.json();
@@ -38,7 +37,7 @@ export default function ProductGrid() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [category]);
 
   if (error)
     return (

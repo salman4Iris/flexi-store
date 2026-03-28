@@ -51,10 +51,10 @@ const features: Feature[] = [
 
 function FeaturesSection(): React.ReactNode {
   return (
-    <section className="py-12 bg-gray-50 rounded-lg">
+    <section className="py-12 bg-[var(--color-bg)] rounded-lg border border-[var(--color-text)] border-opacity-10">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Shop With Us</h2>
-        <p className="text-lg text-gray-600">Experience shopping like never before with our premium features</p>
+        <h2 className="text-4xl font-bold text-[var(--color-text)] mb-4">Why Shop With Us</h2>
+        <p className="text-lg text-[var(--color-text)] opacity-75">Experience shopping like never before with our premium features</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -65,8 +65,8 @@ function FeaturesSection(): React.ReactNode {
           >
             <CardContent className="pt-6">
               <div className="text-5xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">{feature.title}</h3>
+              <p className="text-[var(--color-text)] opacity-75">{feature.description}</p>
             </CardContent>
           </Card>
         ))}

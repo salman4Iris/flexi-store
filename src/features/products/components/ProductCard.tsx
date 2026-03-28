@@ -58,9 +58,9 @@ export default function ProductCard({
   };
 
   return (
-    <article className="group bg-white rounded-xl overflow-hidden shadow transition duration-300 hover:shadow-lg flex flex-col h-full">
+    <article className="group bg-[var(--color-bg)] rounded-xl overflow-hidden shadow transition duration-300 hover:shadow-lg flex flex-col h-full">
       <Link href={`/products/${id}`} className="block">
-        <figure className="relative overflow-hidden bg-gray-100 aspect-square">
+        <figure className="relative overflow-hidden bg-[var(--color-bg)] border border-opacity-10 aspect-square">
           {computedDiscount > 0 && (
             <span className="absolute top-2 left-2 z-10 text-xs font-semibold text-white px-2 py-1 rounded bg-primary">
               -{computedDiscount}%
@@ -77,7 +77,7 @@ export default function ProductCard({
       </Link>
 
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-base font-semibold mb-2 leading-snug text-gray-800">
+        <h3 className="text-base font-semibold mb-2 leading-snug text-[var(--color-text)]">
           <Link href={`/products/${id}`} className="hover:underline">{name}</Link>
         </h3>
 
@@ -85,7 +85,7 @@ export default function ProductCard({
           <div className="flex items-baseline gap-3">
             <span className="text-lg font-semibold text-primary">{formatPrice(price, currency)}</span>
             {originalPrice && originalPrice > price && (
-              <span className="text-sm text-gray-500 line-through">{formatPrice(originalPrice, currency)}</span>
+              <span className="text-sm text-[var(--color-text)] opacity-75 line-through">{formatPrice(originalPrice, currency)}</span>
             )}
           </div>
         </div>

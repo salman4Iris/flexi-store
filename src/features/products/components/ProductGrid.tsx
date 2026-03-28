@@ -50,10 +50,10 @@ export default function ProductGrid({ category }: ProductGridProps): React.React
     return (
       <div aria-busy="true" aria-live="polite" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="animate-pulse bg-white rounded-xl p-4">
-            <div className="h-44 bg-gray-200 rounded-md mb-3" />
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-            <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div key={i} className="animate-pulse bg-[var(--color-bg)] rounded-xl p-4">
+            <div className="h-44 bg-[var(--color-text)] bg-opacity-10 rounded-md mb-3" />
+            <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-3/4 mb-2" />
+            <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-1/2" />
           </div>
         ))}
       </div>

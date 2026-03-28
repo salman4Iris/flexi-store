@@ -119,8 +119,29 @@ export default function CheckoutPage() {
 			});
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || 'Order failed');
+			
+			const order = data.order;
+			
+			// Enhance order with shipping address for display on success page
+			const enhancedOrder = {
+				...order,
+				shippingAddress: {
+					fullName: form.fullName,
+					address: form.address,
+					city: form.city,
+					state: form.state,
+					pincode: form.pincode,
+				},
+			};
+			
+			// Store order in sessionStorage for the success page
+			if (typeof window !== 'undefined') {
+				sessionStorage.setItem('lastOrder', JSON.stringify(enhancedOrder));
+			}
+			
 			clear();
-			router.push('/order');
+			// Redirect to order summary/success page
+			router.push(`/checkout/success?orderId=${order.id}`);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {

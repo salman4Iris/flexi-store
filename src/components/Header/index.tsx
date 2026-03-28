@@ -12,11 +12,11 @@ const Header = () => {
     };
 
     return (
-        <div className="w-full bg-white shadow-md">
+        <div className="w-full bg-[var(--color-bg)] shadow-md">
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
             {/* Logo */}
             <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-gray-800">FlexiStore</h1>
+                <h1 className="text-2xl font-bold text-[var(--color-text)]">FlexiStore</h1>
             </div>
 
             {/* Search Bar */}
@@ -36,12 +36,12 @@ const Header = () => {
             {/* Right Icons */}
             <div className="flex gap-4">
                 {/* Menu Icon */}
-                <button className="text-2xl p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Menu">
+                <button className="text-2xl p-2 hover:bg-[var(--color-text)] hover:bg-opacity-10 rounded-lg transition-colors" title="Menu">
                 ☰
                 </button>
 
                 {/* Cart Icon */}
-                <button className="text-2xl p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Cart">
+                <button className="text-2xl p-2 hover:bg-[var(--color-text)] hover:bg-opacity-10 rounded-lg transition-colors" title="Cart">
                 🛍️
                 </button>
             </div>

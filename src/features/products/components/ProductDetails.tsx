@@ -50,7 +50,7 @@ export function ProductDetails({ product }: ProductDetailsProps): React.ReactNod
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       {/* Product Image Section */}
       <div className="flex flex-col gap-4">
-        <div className="relative bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center aspect-square">
+        <div className="relative bg-[var(--color-bg)] border border-[var(--color-text)] border-opacity-10 rounded-lg overflow-hidden flex items-center justify-center aspect-square">
           <img
             src={product.image}
             alt={product.alt || product.name}
@@ -94,12 +94,12 @@ export function ProductDetails({ product }: ProductDetailsProps): React.ReactNod
 
           {/* Description */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-900">Description</h3>
-            <p className="text-gray-700 leading-relaxed">{product.description}</p>
+            <h3 className="text-sm font-semibold text-[var(--color-text)]">Description</h3>
+            <p className="text-[var(--color-text)] leading-relaxed">{product.description}</p>
           </div>
 
           {/* Product Details */}
-          <div className="space-y-2 py-4 border-y border-gray-200">
+          <div className="space-y-2 py-4 border-y border-[var(--color-text)] border-opacity-10">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Product ID:</span>
@@ -141,17 +141,17 @@ export function ProductDetails({ product }: ProductDetailsProps): React.ReactNod
 
           {/* Trust Badges */}
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
+            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-gray-700">Authentic</div>
+              <div className="font-medium text-[var(--color-text)]">Authentic</div>
             </div>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
+            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-gray-700">Secure</div>
+              <div className="font-medium text-[var(--color-text)]">Secure</div>
             </div>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
+            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-gray-700">Warranty</div>
+              <div className="font-medium text-[var(--color-text)]">Warranty</div>
             </div>
           </div>
         </CardContent>

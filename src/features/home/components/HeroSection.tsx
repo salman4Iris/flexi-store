@@ -13,10 +13,10 @@ function HeroSection(): React.ReactNode {
       </div>
 
       <div className="relative z-10 max-w-2xl mx-auto text-center px-4">
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6">
           Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Flexi-Store</span>
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8">
+        <p className="text-lg md:text-xl text-[var(--color-text)] mb-8">
           Discover curated products for every lifestyle. Shop from our exclusive collection of trending items, premium brands, and must-have essentials.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -26,7 +26,7 @@ function HeroSection(): React.ReactNode {
             </Button>
           </Link>
           <Link href="#featured">
-            <Button className="px-8 py-3 text-lg font-semibold border border-gray-900 bg-transparent text-gray-900 hover:bg-gray-900 hover:text-white transition-colors">
+            <Button className="px-8 py-3 text-lg font-semibold border border-[var(--color-text)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-text)] hover:text-[var(--color-bg)] transition-colors">
               Explore Collections
             </Button>
           </Link>

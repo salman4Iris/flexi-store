@@ -99,7 +99,7 @@ export default function Navbar(): React.ReactElement {
             )}
             <Link
               href="/"
-              className="text-2xl font-extrabold text-[var(--color-primary)] hover:opacity-90 transition-opacity"
+              className="text-2xl font-extrabold text-[var(--color-text)] hover:opacity-90 transition-opacity"
             >
               Flexi-Store
             </Link>
@@ -117,7 +117,7 @@ export default function Navbar(): React.ReactElement {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors no-underline whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors no-underline whitespace-nowrap"
                 >
                   {item.label === "Account" && <User className="w-4 h-4" />}
                   {item.label}
@@ -190,7 +190,7 @@ export default function Navbar(): React.ReactElement {
                 variant="ghost"
                 size="icon"
                 aria-label="Shopping cart"
-                className="relative"
+                className="relative text-black dark:text-white"
               >
                 <ShoppingCart className="w-6 h-6" />
                 {cartItemCount > 0 && (
@@ -251,7 +251,7 @@ export default function Navbar(): React.ReactElement {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-2 py-2 px-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+                className="flex items-center gap-2 py-2 px-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
                 onClick={closeMenu}
               >
                 {item.label === "Account" && <User className="w-4 h-4" />}

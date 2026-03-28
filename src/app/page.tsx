@@ -29,10 +29,10 @@ function Home(): React.ReactNode {
       <Section>
         <div className="mb-12">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-[var(--color-text)] mb-4">
               Featured Products
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-[var(--color-text)] opacity-75">
               Check out our handpicked selection of trending and bestselling
               items
             </p>

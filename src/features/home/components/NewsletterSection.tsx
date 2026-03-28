@@ -55,13 +55,13 @@ function NewsletterSection(): React.ReactNode {
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             disabled={loading}
-            className="bg-white border-0 text-gray-900 placeholder-gray-500"
+            className="bg-white dark:bg-[var(--color-bg)] border-0 text-[var(--color-text)] placeholder-[var(--color-text)] placeholder-opacity-50"
             aria-label="Email address for newsletter"
           />
           <Button
             type="submit"
             disabled={loading}
-            className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 whitespace-nowrap"
+            className="bg-white dark:bg-[var(--color-primary)] text-[var(--color-text)] dark:text-white hover:bg-blue-50 dark:hover:bg-[var(--color-primary)]/90 font-semibold px-8 whitespace-nowrap"
           >
             {loading ? 'Subscribing...' : 'Subscribe'}
           </Button>

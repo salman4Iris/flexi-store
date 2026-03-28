@@ -178,7 +178,7 @@ export default function OrdersPage() {
               )}
             </div>
             <Link href="/products">
-              <Button variant="outline">Continue Shopping</Button>
+              <Button variant="outline" className="!text-black dark:!text-white">Continue Shopping</Button>
             </Link>
           </div>
 
@@ -190,7 +190,7 @@ export default function OrdersPage() {
                 Please log in to view your orders.
               </p>
               <Link href="/auth/login">
-                <Button>Log In</Button>
+                <Button className="!text-white">Log In</Button>
               </Link>
             </div>
           ) : orders.length === 0 ? (
@@ -200,7 +200,7 @@ export default function OrdersPage() {
                 Looks like you haven&apos;t placed any orders. Start shopping to see your orders here.
               </p>
               <Link href="/products">
-                <Button>Start Shopping</Button>
+                <Button className="!text-white">Start Shopping</Button>
               </Link>
             </div>
           ) : (

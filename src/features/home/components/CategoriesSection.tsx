@@ -60,23 +60,23 @@ const categories: Category[] = [
 
 function CategoriesSection(): React.ReactNode {
   return (
-    <section id="featured" className="py-12">
+    <section id="featured" className="py-12 bg-[var(--color-bg)] rounded-lg border border-[var(--color-text)] border-opacity-10">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">Shop by Category</h2>
-        <p className="text-lg text-gray-600">Browse our diverse collection of products</p>
+        <h2 className="text-4xl font-bold text-[var(--color-text)] mb-4">Shop by Category</h2>
+        <p className="text-lg text-[var(--color-text)] opacity-75">Browse our diverse collection of products</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((category) => (
           <Link key={category.id} href={category.href}>
-            <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer text-[var(--color-text)]">
               <CardContent className="pt-6">
                 <img src={category.image} alt={category.name} loading="lazy" className="w-full h-48 object-cover rounded-md mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-[var(--color-text)] mb-2 group-hover:opacity-80 transition-opacity">
                   {category.name}
                 </h3>
-                <p className="text-gray-600 mb-4">{category.description}</p>
-                <Button variant="outline" className="w-full">
+                <p className="text-[var(--color-text)] mb-4">{category.description}</p>
+                <Button variant="outline" className="w-full text-[var(--color-text)]">
                   Explore
                 </Button>
               </CardContent>

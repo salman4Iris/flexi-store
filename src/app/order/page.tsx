@@ -21,15 +21,15 @@ type Order = {
   items: OrderItem[];
 };
 
-function OrderStatusBadge() {
+const OrderStatusBadge = (): React.ReactElement => {
   return (
     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
       Delivered
     </span>
   );
-}
+};
 
-function OrderCard({ order }: { order: Order }) {
+const OrderCard = ({ order }: { order: Order }): React.ReactElement => {
   const [expanded, setExpanded] = useState(false);
   const itemCount = order.items?.length ?? 0;
   const shippingCost = 0;
@@ -118,9 +118,9 @@ function OrderCard({ order }: { order: Order }) {
       </CardContent>
     </Card>
   );
-}
+};
 
-function OrderListSkeleton() {
+const OrderListSkeleton = (): React.ReactElement => {
   return (
     <div className="space-y-3">
       {[1, 2, 3].map((n) => (
@@ -138,19 +138,16 @@ function OrderListSkeleton() {
       ))}
     </div>
   );
-}
+};
 
-export default function OrdersPage() {
+const OrdersPage = (): React.ReactElement => {
   const { token } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(Boolean(token));
 
   useEffect(() => {
     let mounted = true;
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return () => { mounted = false; };
     fetch("/api/orders", { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data: unknown) => {
@@ -178,7 +175,7 @@ export default function OrdersPage() {
               )}
             </div>
             <Link href="/products">
-              <Button variant="outline" className="!text-black dark:!text-white">Continue Shopping</Button>
+              <Button variant="outline" className="text-black! dark:text-white!">Continue Shopping</Button>
             </Link>
           </div>
 
@@ -190,7 +187,7 @@ export default function OrdersPage() {
                 Please log in to view your orders.
               </p>
               <Link href="/auth/login">
-                <Button className="!text-white">Log In</Button>
+                <Button className="text-white!">Log In</Button>
               </Link>
             </div>
           ) : orders.length === 0 ? (
@@ -200,7 +197,7 @@ export default function OrdersPage() {
                 Looks like you haven&apos;t placed any orders. Start shopping to see your orders here.
               </p>
               <Link href="/products">
-                <Button className="!text-white">Start Shopping</Button>
+                <Button className="text-white!">Start Shopping</Button>
               </Link>
             </div>
           ) : (
@@ -221,4 +218,6 @@ export default function OrdersPage() {
       </Section>
     </Container>
   );
-}
+};
+
+export default OrdersPage;

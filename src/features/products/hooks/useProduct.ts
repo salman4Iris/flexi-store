@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getProduct } from '@/features/products/services/products';
 import type { Product } from '@/features/products/types/product';
 
 export type UseProductReturn = {
@@ -21,13 +22,12 @@ export const useProduct = (slug: string): UseProductReturn => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/products/${slug}`);
-        if (!response.ok) {
+        const data = await getProduct(slug);
+        if (!data) {
           if (mounted) setError('Product not found');
           if (mounted) setProduct(null);
           return;
         }
-        const data = (await response.json()) as Product;
         if (mounted) setProduct(data);
       } catch {
         if (mounted) setError('Failed to load product');

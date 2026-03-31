@@ -7,7 +7,7 @@ type Order = { id: string; userId: string; items: OrderItem[]; total: number; cr
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 
-async function ensureDataDir() {
+async function ensureDataDir(): Promise<void> {
   try {
     await fs.mkdir(DATA_DIR, { recursive: true });
   } catch {}
@@ -23,12 +23,12 @@ async function readOrders(): Promise<Order[]> {
   }
 }
 
-async function writeOrders(list: Order[]) {
+async function writeOrders(list: Order[]): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(ORDERS_FILE, JSON.stringify(list, null, 2), 'utf-8');
 }
 
-export async function createOrder(userId: string, items: OrderItem[], total: number) {
+export async function createOrder(userId: string, items: OrderItem[], total: number): Promise<Order> {
   const orders = await readOrders();
   const id = `order_${orders.length + 1}`;
   const order: Order = { id, userId, items, total, createdAt: new Date().toISOString() };
@@ -37,11 +37,11 @@ export async function createOrder(userId: string, items: OrderItem[], total: num
   return order;
 }
 
-export async function listOrders(userId: string) {
+export async function listOrders(userId: string): Promise<Order[]> {
   const orders = await readOrders();
   return orders.filter((o) => o.userId === userId);
 }
 
-export async function clearOrders() {
+export async function clearOrders(): Promise<void> {
   await writeOrders([]);
 }

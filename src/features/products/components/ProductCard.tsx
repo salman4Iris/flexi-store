@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/store/cart";
 
@@ -66,28 +67,28 @@ const ProductCard = ({
   const discount_value = computedDiscount();
 
   return (
-    <article className="group bg-[var(--color-bg)] rounded-xl overflow-hidden shadow transition duration-300 hover:shadow-lg flex flex-col h-full">
+    <article className="group bg-(--color-bg) rounded-xl overflow-hidden shadow transition duration-300 hover:shadow-lg flex flex-col h-full">
       <Link href={`/products/${id}`} className="block">
-        <figure className="relative overflow-hidden bg-[var(--color-bg)] border border-opacity-10 aspect-square">
+        <figure className="relative overflow-hidden bg-(--color-bg) border border-opacity-10 aspect-square">
           {discount_value > 0 && (
             <span className="absolute top-2 left-2 z-10 text-xs font-semibold text-white px-2 py-1 rounded bg-primary">
               -{discount_value}%
             </span>
           )}
 
-          <img
+          <Image
             src={image}
             alt={alt ?? name}
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : "low"}
-            decoding="async"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+            priority={priority}
           />
         </figure>
       </Link>
 
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-base font-semibold mb-2 leading-snug text-[var(--color-text)]">
+        <h3 className="text-base font-semibold mb-2 leading-snug text-(--color-text)">
           <Link href={`/products/${id}`} className="hover:underline">{name}</Link>
         </h3>
 
@@ -95,7 +96,7 @@ const ProductCard = ({
           <div className="flex items-baseline gap-3">
             <span className="text-lg font-semibold text-primary">{formatPrice(price, currency)}</span>
             {originalPrice && originalPrice > price && (
-              <span className="text-sm text-[var(--color-text)] opacity-75 line-through">{formatPrice(originalPrice, currency)}</span>
+              <span className="text-sm text-(--color-text) opacity-75 line-through">{formatPrice(originalPrice, currency)}</span>
             )}
           </div>
         </div>

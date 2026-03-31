@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -50,14 +50,14 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       {/* Product Image Section */}
       <div className="flex flex-col gap-4">
-        <div className="relative bg-[var(--color-bg)] border border-[var(--color-text)] border-opacity-10 rounded-lg overflow-hidden flex items-center justify-center aspect-square">
-          <img
+        <div className="relative bg-(--color-bg) border border-(--color-text) border-opacity-10 rounded-lg overflow-hidden flex items-center justify-center aspect-square">
+          <Image
             src={product.image}
             alt={product.alt || product.name}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="w-full h-full object-contain p-8"
+            priority
           />
           {discount > 0 && (
             <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -97,12 +97,12 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
 
           {/* Description */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-[var(--color-text)]">Description</h3>
-            <p className="text-[var(--color-text)] leading-relaxed">{product.description}</p>
+            <h3 className="text-sm font-semibold text-(--color-text)">Description</h3>
+            <p className="text-(--color-text) leading-relaxed">{product.description}</p>
           </div>
 
           {/* Product Details */}
-          <div className="space-y-2 py-4 border-y border-[var(--color-text)] border-opacity-10">
+          <div className="space-y-2 py-4 border-y border-(--color-text) border-opacity-10">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Product ID:</span>
@@ -144,17 +144,17 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
 
           {/* Trust Badges */}
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
+            <div className="p-2 bg-(--color-bg) rounded border border-(--color-text) border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-[var(--color-text)]">Authentic</div>
+              <div className="font-medium text-(--color-text)">Authentic</div>
             </div>
-            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
+            <div className="p-2 bg-(--color-bg) rounded border border-(--color-text) border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-[var(--color-text)]">Secure</div>
+              <div className="font-medium text-(--color-text)">Secure</div>
             </div>
-            <div className="p-2 bg-[var(--color-bg)] rounded border border-[var(--color-text)] border-opacity-10">
+            <div className="p-2 bg-(--color-bg) rounded border border-(--color-text) border-opacity-10">
               <div>✓</div>
-              <div className="font-medium text-[var(--color-text)]">Warranty</div>
+              <div className="font-medium text-(--color-text)">Warranty</div>
             </div>
           </div>
         </CardContent>

@@ -3,7 +3,7 @@ import Container from "../layout/Container";
 
 const currentYear = new Date().getUTCFullYear();
 
-export default function Footer() {
+const Footer = (): React.ReactElement => {
   return (
     <footer className="bg-(--color-bg) text-(--color-text) border-t mt-12">
       <Container className="py-12">
@@ -51,4 +51,6 @@ export default function Footer() {
       </Container>
     </footer>
   );
-}
+};
+
+export default Footer;

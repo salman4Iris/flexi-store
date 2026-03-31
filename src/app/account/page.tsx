@@ -157,6 +157,12 @@ const RecentOrders = ({ orders, loading }: { orders: Order[]; loading: boolean }
 };
 
 type Profile = { firstName: string; lastName: string };
+type AccountUser = { id: string; email: string };
+type AccountContentProps = {
+  logout: () => void;
+  token: string | null;
+  user: AccountUser;
+};
 
 const loadProfile = (userId: string): Profile => {
   try {
@@ -179,32 +185,17 @@ const saveProfile = (userId: string, profile: Profile): void => {
 };
 
 /* ── Page ── */
-const AccountPage = (): React.ReactElement | null => {
-  const { user, token, logout, ready } = useAuth();
-  const router = useRouter();
-
+const AccountContent = ({ logout, token, user }: AccountContentProps): React.ReactElement => {
+  const initialProfile = useMemo<Profile>(() => loadProfile(user.id), [user.id]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState<boolean>(true);
+  const [ordersLoading, setOrdersLoading] = useState<boolean>(Boolean(token));
 
-  const [profile, setProfile] = useState<Profile>({ firstName: "", lastName: "" });
-  const [profileEdit, setProfileEdit] = useState<Profile>({ firstName: "", lastName: "" });
+  const [profile, setProfile] = useState<Profile>(initialProfile);
+  const [profileEdit, setProfileEdit] = useState<Profile>(initialProfile);
   const [profileSaved, setProfileSaved] = useState<boolean>(false);
   const [profileError, setProfileError] = useState<string>("");
 
-  /* Redirect unauthenticated users */
-  useEffect(() => {
-    if (ready && !user) {
-      void router.replace("/auth/login");
-    }
-  }, [ready, user, router]);
-
-  /* Load profile from localStorage */
-  useEffect(() => {
-    if (!user) return;
-    const p = loadProfile(user.id);
-    setProfile(p);
-    setProfileEdit(p);
-  }, [user]);
+  const totalSpent = useMemo(() => orders.reduce((s, o) => s + o.total, 0), [orders]);
 
   const handleProfileSave = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -234,8 +225,13 @@ const AccountPage = (): React.ReactElement | null => {
 
   /* Fetch orders for stats */
   useEffect(() => {
-    if (!token) { setOrdersLoading(false); return; }
     let mounted = true;
+    if (!token) {
+      return (): void => {
+        mounted = false;
+      };
+    }
+
     fetch("/api/orders", { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data: unknown) => { if (mounted) setOrders(Array.isArray(data) ? data : []); })
@@ -243,10 +239,6 @@ const AccountPage = (): React.ReactElement | null => {
       .finally(() => mounted && setOrdersLoading(false));
     return () => { mounted = false; };
   }, [token]);
-
-  if (!ready || !user) return null;
-
-  const totalSpent = useMemo(() => orders.reduce((s, o) => s + o.total, 0), [orders]);
 
   return (
     <Container>
@@ -415,5 +407,21 @@ const AccountPage = (): React.ReactElement | null => {
       </Section>
     </Container>
   );
-}
+};
+
+const AccountPage = (): React.ReactElement | null => {
+  const { user, token, logout, ready } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (ready && !user) {
+      void router.replace("/auth/login");
+    }
+  }, [ready, user, router]);
+
+  if (!ready || !user) return null;
+
+  return <AccountContent logout={logout} token={token} user={user} />;
+};
+
 export default AccountPage;

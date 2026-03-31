@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { ACTIVE_THEME, type ThemeName } from "@/config/theme";
 
 type ThemeContextType = {
@@ -44,25 +44,29 @@ const isThemeName = (value: string): value is ThemeName => {
   return themeNames.includes(value as ThemeName);
 };
 
-const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-  const [theme, setThemeState] = useState<ThemeName>(ACTIVE_THEME);
-  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+const getStoredTheme = (): ThemeName => {
+  if (typeof window === "undefined") {
+    return ACTIVE_THEME;
+  }
 
-  useEffect(() => {
-    try {
-      const storedTheme = localStorage.getItem("flexi-theme");
-      if (storedTheme && isThemeName(storedTheme)) {
-        setThemeState(storedTheme);
-      }
-    } catch {
-      // Silently fail for localStorage errors
+  try {
+    const storedTheme = localStorage.getItem("flexi-theme");
+    if (storedTheme && isThemeName(storedTheme)) {
+      return storedTheme;
     }
-    setIsHydrated(true);
-  }, []);
+  } catch {
+    // Silently fail for localStorage errors
+  }
+
+  return ACTIVE_THEME;
+};
+
+const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
+  const storedTheme = useMemo<ThemeName>(() => getStoredTheme(), []);
+  const [themeState, setThemeState] = useState<ThemeName | null>(null);
+  const theme = themeState ?? storedTheme;
 
   useEffect(() => {
-    if (!isHydrated) return;
-
     const root = document.documentElement;
     const vars = themes[theme] ?? themes.default;
     
@@ -77,7 +81,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }): React.React
     } catch {
       // Silently fail for localStorage errors
     }
-  }, [theme, isHydrated]);
+  }, [theme]);
 
   const setTheme = useCallback((t: ThemeName): void => {
     setThemeState(t);

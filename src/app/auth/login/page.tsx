@@ -12,7 +12,7 @@ import { useAuth } from '@/providers/AuthProvider';
 
 
 
-export default function LoginPage() {
+const LoginPage = (): React.ReactElement => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -87,7 +87,7 @@ export default function LoginPage() {
                                 </Button>
                             </form>
                             <p className="mt-4 text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
+                                Don&apos;t have an account?{' '}
                                 <Link href="/auth/register" className="text-primary underline hover:underline">
                                     Sign up
                                 </Link>
@@ -98,4 +98,6 @@ export default function LoginPage() {
             </Section>
         </Container>
     );
-}
+};
+
+export default LoginPage;

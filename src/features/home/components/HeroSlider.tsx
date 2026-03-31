@@ -129,10 +129,10 @@ const HeroSlider = (): React.ReactNode => {
           isTransitioning ? "opacity-0" : "opacity-100"
         }`}
       >
-        <h1 className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold text-(--color-text) mb-6">
           {slide.title}
         </h1>
-        <p className="text-lg md:text-xl text-[var(--color-text)] mb-8">
+        <p className="text-lg md:text-xl text-(--color-text) mb-8">
           {slide.subtitle}
         </p>
 
@@ -146,7 +146,7 @@ const HeroSlider = (): React.ReactNode => {
           <Link href="/products">
             <Button
               variant="outline"
-              className="px-8 py-3 text-lg font-semibold border border-[var(--color-text)] text-[var(--color-text)] hover:bg-[var(--color-text)] hover:text-[var(--color-bg)] transition-colors"
+              className="px-8 py-3 text-lg font-semibold border border-(--color-text) text-(--color-text) hover:bg-(--color-text) hover:text-(--color-bg) transition-colors"
             >
               Browse All
             </Button>
@@ -156,15 +156,15 @@ const HeroSlider = (): React.ReactNode => {
 
       {/* Slide indicators/dots */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
-        {slides.map((_, index) => (
+        {slides.map((slideItem, index) => (
           <button
-            key={index}
+            key={slideItem.id}
             onClick={() => handleSlideChange(index)}
             aria-label={`Go to slide ${index + 1}`}
             className={`transition-all duration-300 rounded-full ${
               index === currentSlide
-                ? "bg-[var(--color-text)] w-8 h-3"
-                : "bg-[var(--color-text)] bg-opacity-30 w-3 h-3 hover:bg-opacity-50"
+                ? "bg-(--color-text) w-8 h-3"
+                : "bg-(--color-text) bg-opacity-30 w-3 h-3 hover:bg-opacity-50"
             }`}
             disabled={isTransitioning}
           />
@@ -176,7 +176,7 @@ const HeroSlider = (): React.ReactNode => {
         onClick={() =>
           handleSlideChange((currentSlide - 1 + slides.length) % slides.length)
         }
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-[var(--color-text)] p-3 rounded-full transition-colors disabled:opacity-50"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
         aria-label="Previous slide"
         disabled={isTransitioning}
       >
@@ -184,7 +184,7 @@ const HeroSlider = (): React.ReactNode => {
       </button>
       <button
         onClick={() => handleSlideChange((currentSlide + 1) % slides.length)}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-[var(--color-text)] p-3 rounded-full transition-colors disabled:opacity-50"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
         aria-label="Next slide"
         disabled={isTransitioning}
       >

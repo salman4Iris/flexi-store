@@ -28,12 +28,12 @@ const STATES = [
 	'Maharashtra', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal',
 ];
 
-function FieldError({ msg }: { msg?: string }) {
+const FieldError = ({ msg }: { msg?: string }): React.ReactElement | null => {
 	if (!msg) return null;
 	return <p className="text-xs text-destructive mt-1">{msg}</p>;
-}
+};
 
-function FormField({
+const FormField = ({
 	label,
 	id,
 	error,
@@ -43,7 +43,7 @@ function FormField({
 	id: string;
 	error?: string;
 	children: React.ReactNode;
-}) {
+}): React.ReactElement => {
 	return (
 		<div className="flex flex-col gap-1">
 			<label htmlFor={id} className="text-sm font-medium">
@@ -53,9 +53,9 @@ function FormField({
 			<FieldError msg={error} />
 		</div>
 	);
-}
+};
 
-export default function CheckoutPage() {
+const CheckoutPage = (): React.ReactElement => {
 	const { items, total, clear } = useCart();
 	const { token, user } = useAuth();
 	const [loading, setLoading] = useState(false);
@@ -117,14 +117,20 @@ export default function CheckoutPage() {
 				},
 				body: JSON.stringify({ items, total: total() }),
 			});
-			const data = await res.json();
-			if (!res.ok) throw new Error(data.message || 'Order failed');
-			
-			const order = data.order;
+			const data = (await res.json()) as
+				| { order: { id: string } }
+				| { message?: string };
+			if (!res.ok) {
+				const message = 'message' in data ? (data.message ?? 'Order failed') : 'Order failed';
+				throw new Error(message);
+			}
+			if (!('order' in data)) {
+				throw new Error('Order failed');
+			}
 			
 			// Enhance order with shipping address for display on success page
 			const enhancedOrder = {
-				...order,
+				...data.order,
 				shippingAddress: {
 					fullName: form.fullName,
 					address: form.address,
@@ -141,7 +147,7 @@ export default function CheckoutPage() {
 			
 			clear();
 			// Redirect to order summary/success page
-			router.push(`/checkout/success?orderId=${order.id}`);
+			router.push(`/checkout/success?orderId=${data.order.id}`);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {
@@ -149,7 +155,7 @@ export default function CheckoutPage() {
 		}
 	};
 
-	const subtotal = useMemo(() => total(), [items]);
+	const subtotal = useMemo(() => total(), [total]);
 	const shippingCost = 0;
 	const orderTotal = subtotal + shippingCost;
 
@@ -432,4 +438,6 @@ export default function CheckoutPage() {
 			</Section>
 		</Container>
 	);
-}
+};
+
+export default CheckoutPage;

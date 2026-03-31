@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/providers/AuthProvider';
 
-export default function RegisterPage() {
+const RegisterPage = (): React.ReactElement => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -150,12 +150,6 @@ export default function RegisterPage() {
                                     {loading ? 'Signing up...' : 'Sign Up'}
                                 </Button>
                             </form>
-                        <p className="mt-4 text-center text-sm">
-                            Already have an account?{' '}
-                            <a href="/auth/login" className="text-blue-600 hover:underline">
-                                Login
-                            </a>
-                        </p>
                             <p className="mt-4 text-center text-sm text-muted-foreground">
                                 Already have an account?{' '}
                                 <Link href="/auth/login" className="text-primary underline hover:underline">
@@ -168,4 +162,6 @@ export default function RegisterPage() {
             </Section>
         </Container>
     );
-}
+};
+
+export default RegisterPage;

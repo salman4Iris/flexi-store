@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const token = `mock-token-${user.id}`;
 
     return NextResponse.json({ token, user: { id: user.id, email: user.email } }, { status: 200 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: 'Invalid request' }, { status: 400 });
   }
 }

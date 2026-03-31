@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/services/mockAuth';
 
-function isValidEmail(email: string) {
+const isValidEmail = (email: string): boolean => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+};
 
 export async function POST(req: Request) {
   try {
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     // Return mock token on registration
     const token = `mock-token-${user.id}`;
     return NextResponse.json({ message: 'Registered', user, token }, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: 'Invalid request' }, { status: 400 });
   }
 }

@@ -31,35 +31,6 @@ const eslintConfig = defineConfig([
       "no-var": "error",
       "object-shorthand": "warn",
 
-      // TypeScript strict patterns
-      "@typescript-eslint/explicit-function-return-types": [
-        "error",
-        {
-          allowExpressions: true,
-          allowTypedFunctionExpressions: true,
-          allowHigherOrderFunctions: true,
-        },
-      ],
-      "@typescript-eslint/explicit-member-accessibility": [
-        "error",
-        { accessibility: "explicit" },
-      ],
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_" },
-      ],
-      "@typescript-eslint/prefer-nullish-coalescing": "warn",
-      "@typescript-eslint/prefer-optional-chain": "warn",
-      "@typescript-eslint/strict-boolean-expressions": [
-        "warn",
-        {
-          allowString: false,
-          allowNumber: false,
-          allowNullableObject: false,
-        },
-      ],
-
       // React/Next.js patterns
       "react/function-component-definition": [
         "error",

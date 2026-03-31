@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type User = { id: string; email: string } | null;
@@ -15,6 +15,29 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+type SessionState = {
+  user: User;
+  token: string | null;
+};
+
+const getStoredSession = (): SessionState => {
+  if (typeof window === "undefined") {
+    return { user: null, token: null };
+  }
+
+  try {
+    const token = localStorage.getItem("auth_token");
+    const rawUser = localStorage.getItem("auth_user");
+
+    return {
+      token,
+      user: rawUser ? (JSON.parse(rawUser) as Exclude<User, null>) : null,
+    };
+  } catch {
+    return { user: null, token: null };
+  }
+};
+
 export function useAuth(): AuthContextType {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
@@ -22,26 +45,14 @@ export function useAuth(): AuthContextType {
 }
 
 const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-  const [user, setUser] = useState<User>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+  const [session, setSession] = useState<SessionState | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    try {
-      const t = localStorage.getItem("auth_token");
-      const u = localStorage.getItem("auth_user");
-      if (t) setToken(t);
-      if (u) setUser(JSON.parse(u));
-    } catch {
-      // Silently fail for localStorage errors
-    }
-    setIsHydrated(true);
-  }, []);
+  const storedSession = useMemo<SessionState>(() => getStoredSession(), []);
+  const currentSession = session ?? storedSession;
 
   const login = (t: string, u: User): void => {
-    setToken(t);
-    setUser(u);
+    setSession({ token: t, user: u });
     try {
       localStorage.setItem("auth_token", t);
       localStorage.setItem("auth_user", JSON.stringify(u));
@@ -51,8 +62,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactE
   };
 
   const logout = (): void => {
-    setToken(null);
-    setUser(null);
+    setSession({ token: null, user: null });
     try {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("auth_user");
@@ -62,7 +72,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }): React.ReactE
     router.push("/");
   };
 
-  const value: AuthContextType = { user, token, login, logout, ready: isHydrated };
+  const value: AuthContextType = {
+    user: currentSession.user,
+    token: currentSession.token,
+    login,
+    logout,
+    ready: true,
+  };
 
   return (
     <AuthContext.Provider value={value}>

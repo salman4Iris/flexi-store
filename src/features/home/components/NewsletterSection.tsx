@@ -31,7 +31,7 @@ const NewsletterSection = (): React.ReactNode => {
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
-    } catch (err) {
+    } catch {
       setError('Failed to subscribe. Please try again.');
     } finally {
       setLoading(false);
@@ -39,7 +39,7 @@ const NewsletterSection = (): React.ReactNode => {
   };
 
   return (
-    <section className="py-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
+    <section className="py-12 bg-linear-to-r from-blue-600 to-indigo-600 rounded-lg">
       <div className="max-w-2xl mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
           Subscribe to Our Newsletter
@@ -55,13 +55,13 @@ const NewsletterSection = (): React.ReactNode => {
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             disabled={loading}
-            className="bg-white dark:bg-[var(--color-bg)] border-0 text-[var(--color-text)] placeholder-[var(--color-text)] placeholder-opacity-50"
+            className="bg-white dark:bg-(--color-bg) border-0 text-(--color-text) placeholder-(--color-text) placeholder-opacity-50"
             aria-label="Email address for newsletter"
           />
           <Button
             type="submit"
             disabled={loading}
-            className="bg-white dark:bg-[var(--color-primary)] text-[var(--color-text)] dark:text-white hover:bg-blue-50 dark:hover:bg-[var(--color-primary)]/90 font-semibold px-8 whitespace-nowrap"
+            className="bg-white dark:bg-(--color-primary) text-(--color-text) dark:text-white hover:bg-blue-50 dark:hover:bg-primary/90 font-semibold px-8 whitespace-nowrap"
           >
             {loading ? 'Subscribing...' : 'Subscribe'}
           </Button>

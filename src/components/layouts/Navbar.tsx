@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, type FormEvent } from "react";
+import { useState, useMemo, useCallback, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -31,33 +31,46 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Account", href: "/account" },
 ];
 
-export default function Navbar(): React.ReactElement {
+const subscribeToDesktopChanges = (callback: () => void): (() => void) => {
+  if (typeof window === "undefined") {
+    return (): void => {};
+  }
+
+  let timeoutId: NodeJS.Timeout;
+  const handleResize = (): void => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(callback, 150);
+  };
+
+  window.addEventListener("resize", handleResize);
+
+  return (): void => {
+    window.removeEventListener("resize", handleResize);
+    clearTimeout(timeoutId);
+  };
+};
+
+const getDesktopSnapshot = (): boolean => {
+  if (typeof window === "undefined") {
+    return true;
+  }
+
+  return window.innerWidth >= 1024;
+};
+
+const Navbar = (): React.ReactElement => {
   const { toggle, theme } = useTheme();
   const { user, logout } = useAuth();
   const { items } = useCart();
   const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isDesktop, setIsDesktop] = useState<boolean>(true);
-  const [isHydrated, setIsHydrated] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    const handleResize = (): void => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        setIsDesktop(window.innerWidth >= 1024);
-      }, 150);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    setIsHydrated(true);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(timeoutId);
-    };
-  }, []);
+  const isDesktop = useSyncExternalStore(
+    subscribeToDesktopChanges,
+    getDesktopSnapshot,
+    (): boolean => true,
+  );
 
   const cartItemCount = useMemo(
     () => items.reduce((sum, item) => sum + (item.qty || 0), 0),
@@ -88,7 +101,7 @@ export default function Navbar(): React.ReactElement {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--color-bg)]/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm">
+    <header className="sticky top-0 z-50 bg-(--color-bg)/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm">
       <Container className="py-4">
         <div className="flex items-center justify-between gap-6">
           {/* Logo & Mobile Menu Button */}
@@ -110,7 +123,7 @@ export default function Navbar(): React.ReactElement {
             )}
             <Link
               href="/"
-              className="text-2xl font-extrabold text-[var(--color-text)] hover:opacity-90 transition-opacity"
+              className="text-2xl font-extrabold text-(--color-text) hover:opacity-90 transition-opacity"
             >
               Flexi-Store
             </Link>
@@ -128,7 +141,7 @@ export default function Navbar(): React.ReactElement {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors no-underline whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-(--color-text) hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors no-underline whitespace-nowrap"
                 >
                   {item.label === "Account" && <User className="w-4 h-4" />}
                   {item.label}
@@ -167,7 +180,7 @@ export default function Navbar(): React.ReactElement {
               <div suppressHydrationWarning>
                 {user ? (
                   <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-800">
-                    <span className="text-sm font-medium text-[var(--color-text)]">
+                    <span className="text-sm font-medium text-(--color-text)">
                       {user.email}
                     </span>
                     <Button
@@ -205,7 +218,7 @@ export default function Navbar(): React.ReactElement {
               >
                 <ShoppingCart className="w-6 h-6" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-[var(--color-primary)] rounded-full">
+                  <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-(--color-primary) rounded-full">
                     {cartItemCount}
                   </span>
                 )}
@@ -262,7 +275,7 @@ export default function Navbar(): React.ReactElement {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-2 py-2 px-2 rounded-md text-sm font-medium text-[var(--color-text)] hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
+                className="flex items-center gap-2 py-2 px-2 rounded-md text-sm font-medium text-(--color-text) hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
                 onClick={closeMenu}
               >
                 {item.label === "Account" && <User className="w-4 h-4" />}
@@ -274,7 +287,7 @@ export default function Navbar(): React.ReactElement {
             <div className="pt-3 border-t border-gray-200 dark:border-gray-800 space-y-2">
               {user ? (
                 <>
-                  <div className="py-2 px-2 text-sm font-medium text-[var(--color-text)]">
+                  <div className="py-2 px-2 text-sm font-medium text-(--color-text)">
                     {user.email}
                   </div>
                   <Button
@@ -321,4 +334,6 @@ export default function Navbar(): React.ReactElement {
       </Container>
     </header>
   );
-}
+};
+
+export default Navbar;

@@ -24,7 +24,7 @@ type Order = {
   };
 };
 
-function CheckoutSuccessContent(): React.ReactElement {
+const CheckoutSuccessContent = (): React.ReactElement => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const [order, setOrder] = useState<Order | null>(null);
@@ -108,10 +108,10 @@ function CheckoutSuccessContent(): React.ReactElement {
                 <div className="flex items-start gap-4">
                   <AlertCircle className="w-6 h-6 text-destructive shrink-0 mt-0.5" />
                   <div>
-                    <h2 className="font-semibold text-[var(--color-text)] mb-2">
+                    <h2 className="font-semibold text-(--color-text) mb-2">
                       {orderError || "Order not found"}
                     </h2>
-                    <p className="text-sm text-[var(--color-text)] opacity-75 mb-4">
+                    <p className="text-sm text-(--color-text) opacity-75 mb-4">
                       We couldn&apos;t find your order. Please try again or contact support.
                     </p>
                     <Link href="/products">
@@ -143,10 +143,10 @@ function CheckoutSuccessContent(): React.ReactElement {
             <div className="flex justify-center mb-4">
               <CheckCircle2 className="w-16 h-16 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold mb-2 text-[var(--color-text)]">
+            <h1 className="text-3xl font-bold mb-2 text-(--color-text)">
               Order Placed Successfully!
             </h1>
-            <p className="text-lg text-[var(--color-text)] opacity-75">
+            <p className="text-lg text-(--color-text) opacity-75">
               Thank you for your purchase. Your order has been confirmed.
             </p>
           </div>
@@ -155,10 +155,10 @@ function CheckoutSuccessContent(): React.ReactElement {
             {/* Order Number */}
             <Card>
               <CardContent className="pt-6">
-                <p className="text-sm text-[var(--color-text)] opacity-75 mb-2">
+                <p className="text-sm text-(--color-text) opacity-75 mb-2">
                   Order Number
                 </p>
-                <p className="text-2xl font-bold text-[var(--color-text)]">
+                <p className="text-2xl font-bold text-(--color-text)">
                   #{order.id}
                 </p>
               </CardContent>
@@ -167,10 +167,10 @@ function CheckoutSuccessContent(): React.ReactElement {
             {/* Order Date */}
             <Card>
               <CardContent className="pt-6">
-                <p className="text-sm text-[var(--color-text)] opacity-75 mb-2">
+                <p className="text-sm text-(--color-text) opacity-75 mb-2">
                   Order Date
                 </p>
-                <p className="text-lg font-semibold text-[var(--color-text)]">
+                <p className="text-lg font-semibold text-(--color-text)">
                   {new Date(order.createdAt).toLocaleDateString("en-IN", {
                     year: "numeric",
                     month: "short",
@@ -183,10 +183,10 @@ function CheckoutSuccessContent(): React.ReactElement {
             {/* Estimated Delivery */}
             <Card>
               <CardContent className="pt-6">
-                <p className="text-sm text-[var(--color-text)] opacity-75 mb-2">
+                <p className="text-sm text-(--color-text) opacity-75 mb-2">
                   Est. Delivery
                 </p>
-                <p className="text-lg font-semibold text-[var(--color-text)]">
+                <p className="text-lg font-semibold text-(--color-text)">
                   {estimatedDelivery.toLocaleDateString("en-IN", {
                     month: "short",
                     day: "numeric",
@@ -215,14 +215,14 @@ function CheckoutSuccessContent(): React.ReactElement {
                         className="flex items-center justify-between py-4 text-sm"
                       >
                         <div className="flex-1">
-                          <p className="font-medium text-[var(--color-text)]">
+                          <p className="font-medium text-(--color-text)">
                             {item.name}
                           </p>
-                          <p className="text-[var(--color-text)] opacity-75 text-xs mt-1">
+                          <p className="text-(--color-text) opacity-75 text-xs mt-1">
                             Qty: {item.qty} × ₹{item.price.toLocaleString("en-IN")}
                           </p>
                         </div>
-                        <span className="font-semibold text-[var(--color-text)]">
+                        <span className="font-semibold text-(--color-text)">
                           ₹{(item.price * item.qty).toLocaleString("en-IN")}
                         </span>
                       </li>
@@ -241,7 +241,7 @@ function CheckoutSuccessContent(): React.ReactElement {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2 text-sm text-[var(--color-text)]">
+                    <div className="space-y-2 text-sm text-(--color-text)">
                       <p className="font-semibold">
                         {order.shippingAddress.fullName}
                       </p>
@@ -264,22 +264,22 @@ function CheckoutSuccessContent(): React.ReactElement {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3 text-sm">
-                    <div className="flex justify-between text-[var(--color-text)] opacity-75">
+                    <div className="flex justify-between text-(--color-text) opacity-75">
                       <span>Subtotal ({order.items.length} items)</span>
                       <span>₹{subtotal.toLocaleString("en-IN")}</span>
                     </div>
-                    <div className="flex justify-between text-[var(--color-text)] opacity-75">
+                    <div className="flex justify-between text-(--color-text) opacity-75">
                       <span>Shipping</span>
                       <span className="text-green-600 font-medium">Free</span>
                     </div>
-                    <div className="flex justify-between text-[var(--color-text)] opacity-75">
+                    <div className="flex justify-between text-(--color-text) opacity-75">
                       <span>Tax</span>
                       <span>₹0</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-[var(--color-text)] border-opacity-10 pt-3">
-                    <div className="flex justify-between font-bold text-lg text-[var(--color-text)]">
+                  <div className="border-t border-(--color-text) border-opacity-10 pt-3">
+                    <div className="flex justify-between font-bold text-lg text-(--color-text)">
                       <span>Total</span>
                       <span>₹{totalAmount.toLocaleString("en-IN")}</span>
                     </div>
@@ -313,7 +313,7 @@ function CheckoutSuccessContent(): React.ReactElement {
               {/* Info Box */}
               <Card>
                 <CardContent className="pt-6">
-                  <div className="space-y-3 text-xs text-[var(--color-text)] opacity-75">
+                  <div className="space-y-3 text-xs text-(--color-text) opacity-75">
                     <p>
                       <span className="block font-semibold mb-1">
                         What&apos;s Next?
@@ -330,12 +330,14 @@ function CheckoutSuccessContent(): React.ReactElement {
       </Section>
     </Container>
   );
-}
+};
 
-export default function CheckoutSuccessPage(): React.ReactElement {
+const CheckoutSuccessPage = (): React.ReactElement => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <CheckoutSuccessContent />
     </Suspense>
   );
-}
+};
+
+export default CheckoutSuccessPage;

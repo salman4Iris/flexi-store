@@ -7,7 +7,7 @@ import Section from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function CartPage() {
+const CartPage = (): React.ReactElement => {
   const { items, remove, clear, total } = useCart();
 
   if (!items.length) {
@@ -78,4 +78,6 @@ export default function CartPage() {
       </Section>
     </Container>
   );
-}
+};
+
+export default CartPage;

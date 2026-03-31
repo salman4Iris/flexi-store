@@ -11,15 +11,15 @@ const ProductDetails = dynamic(
   () => import('@/features/products/components/ProductDetails').then((module) => module.ProductDetails),
 );
 
-export default function ProductDetailPage(): React.ReactNode {
+const ProductDetailPage = (): React.ReactElement => {
   const params = useParams();
   const slug = Array.isArray(params.slug) ? params.slug[0] : (params.slug as string || '');
-  
+  const productSlug = slug || '__missing__';
+  const { product, loading, error } = useProduct(productSlug);
+
   if (!slug) {
     return notFound();
   }
-
-  const { product, loading, error } = useProduct(slug);
 
   if (loading) {
     return (
@@ -28,10 +28,10 @@ export default function ProductDetailPage(): React.ReactNode {
           <div className="flex justify-center items-center h-96">
             <div className="text-center space-y-4">
               <div className="animate-pulse">
-                <div className="h-8 bg-[var(--color-text)] bg-opacity-10 rounded w-48 mx-auto mb-4"></div>
+                <div className="h-8 bg-(--color-text) bg-opacity-10 rounded w-48 mx-auto mb-4"></div>
                 <div className="space-y-2">
-                  <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-96 mx-auto"></div>
-                  <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-96 mx-auto"></div>
+                  <div className="h-4 bg-(--color-text) bg-opacity-10 rounded w-96 mx-auto"></div>
+                  <div className="h-4 bg-(--color-text) bg-opacity-10 rounded w-96 mx-auto"></div>
                 </div>
               </div>
             </div>
@@ -68,13 +68,13 @@ export default function ProductDetailPage(): React.ReactNode {
         <ProductDetails product={product} />
 
         {/* Related Products Section */}
-        <div className="mt-16 pt-8 border-t border-[var(--color-text)] border-opacity-10">
+        <div className="mt-16 pt-8 border-t border-(--color-text) border-opacity-10">
           <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="bg-[var(--color-bg)] border border-[var(--color-text)] border-opacity-10 rounded-lg h-48 flex items-center justify-center text-muted-foreground"
+                className="bg-(--color-bg) border border-(--color-text) border-opacity-10 rounded-lg h-48 flex items-center justify-center text-muted-foreground"
               >
                 Related Product {i}
               </div>
@@ -84,4 +84,6 @@ export default function ProductDetailPage(): React.ReactNode {
       </Section>
     </Container>
   );
-}
+};
+
+export default ProductDetailPage;

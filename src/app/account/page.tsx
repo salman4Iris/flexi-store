@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Container from "@/components/layout/Container";
@@ -18,8 +18,8 @@ import { useAuth } from "@/providers/AuthProvider";
 type Order = { id: string; total: number; createdAt: string; items: { id: string; name: string; price: number; qty: number }[] };
 
 /* ── Avatar initials ── */
-function Avatar({ firstName, lastName, email }: { firstName: string; lastName: string; email: string }) {
-  const initials = firstName && lastName
+const Avatar = ({ firstName, lastName, email }: { firstName: string; lastName: string; email: string }): React.ReactElement => {
+  const initials: string = firstName && lastName
     ? `${firstName[0]}${lastName[0]}`.toUpperCase()
     : email.slice(0, 2).toUpperCase();
   return (
@@ -27,26 +27,39 @@ function Avatar({ firstName, lastName, email }: { firstName: string; lastName: s
       {initials}
     </div>
   );
-}
+};
 
 /* ── Change-password form ── */
-function ChangePasswordForm() {
-  const [current, setCurrent] = useState("");
-  const [next, setNext] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+const ChangePasswordForm = (): React.ReactElement => {
+  const [current, setCurrent] = useState<string>("");
+  const [next, setNext] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    if (!current) { setError("Current password is required"); return; }
-    if (next.length < 6) { setError("New password must be at least 6 characters"); return; }
-    if (next !== confirm) { setError("Passwords do not match"); return; }
+    
+    if (!current) {
+      setError("Current password is required");
+      return;
+    }
+    if (next.length < 6) {
+      setError("New password must be at least 6 characters");
+      return;
+    }
+    if (next !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
+    
     /* No real API — show success feedback */
     setSuccess(true);
-    setCurrent(""); setNext(""); setConfirm("");
+    setCurrent("");
+    setNext("");
+    setConfirm("");
   };
 
   return (
@@ -97,7 +110,7 @@ function ChangePasswordForm() {
 }
 
 /* ── Recent orders mini-list ── */
-function RecentOrders({ orders, loading }: { orders: Order[]; loading: boolean }) {
+const RecentOrders = ({ orders, loading }: { orders: Order[]; loading: boolean }): React.ReactElement => {
   if (loading) {
     return (
       <div className="space-y-2 animate-pulse">
@@ -116,56 +129,73 @@ function RecentOrders({ orders, loading }: { orders: Order[]; loading: boolean }
   }
   return (
     <ul className="divide-y divide-border">
-      {orders.slice(0, 3).map((order) => (
-        <li key={order.id} className="flex items-center justify-between py-3 text-sm">
-          <div>
-            <p className="font-medium">Order #{order.id}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                year: "numeric", month: "short", day: "numeric",
-              })}
-              {" · "}
-              {order.items?.length ?? 0}{" "}
-              {(order.items?.length ?? 0) === 1 ? "item" : "items"}
-            </p>
-          </div>
-          <span className="font-semibold">₹{order.total.toLocaleString("en-IN")}</span>
-        </li>
-      ))}
+      {orders.slice(0, 3).map((order) => {
+        const itemCount = order.items?.length ?? 0;
+        const itemLabel = itemCount === 1 ? "item" : "items";
+        return (
+          <li key={order.id} className="flex items-center justify-between py-3 text-sm">
+            <div>
+              <p className="font-medium">Order #{order.id}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+                {" · "}
+                {itemCount}
+                {" "}
+                {itemLabel}
+              </p>
+            </div>
+            <span className="font-semibold">₹{order.total.toLocaleString("en-IN")}</span>
+          </li>
+        );
+      })}
     </ul>
   );
-}
+};
 
 type Profile = { firstName: string; lastName: string };
 
-function loadProfile(userId: string): Profile {
+const loadProfile = (userId: string): Profile => {
   try {
     const raw = localStorage.getItem(`profile_${userId}`);
-    if (raw) return JSON.parse(raw) as Profile;
-  } catch {}
-  return { firstName: '', lastName: '' };
-}
+    if (raw) {
+      return JSON.parse(raw) as Profile;
+    }
+  } catch {
+    // Silently fail for localStorage errors
+  }
+  return { firstName: "", lastName: "" };
+};
 
-function saveProfile(userId: string, profile: Profile) {
-  try { localStorage.setItem(`profile_${userId}`, JSON.stringify(profile)); } catch {}
-}
+const saveProfile = (userId: string, profile: Profile): void => {
+  try {
+    localStorage.setItem(`profile_${userId}`, JSON.stringify(profile));
+  } catch {
+    // Silently fail for localStorage errors
+  }
+};
 
 /* ── Page ── */
-export default function AccountPage() {
+const AccountPage = (): React.ReactElement | null => {
   const { user, token, logout, ready } = useAuth();
   const router = useRouter();
 
   const [orders, setOrders] = useState<Order[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState<boolean>(true);
 
-  const [profile, setProfile] = useState<Profile>({ firstName: '', lastName: '' });
-  const [profileEdit, setProfileEdit] = useState<Profile>({ firstName: '', lastName: '' });
-  const [profileSaved, setProfileSaved] = useState(false);
-  const [profileError, setProfileError] = useState('');
+  const [profile, setProfile] = useState<Profile>({ firstName: "", lastName: "" });
+  const [profileEdit, setProfileEdit] = useState<Profile>({ firstName: "", lastName: "" });
+  const [profileSaved, setProfileSaved] = useState<boolean>(false);
+  const [profileError, setProfileError] = useState<string>("");
 
   /* Redirect unauthenticated users */
   useEffect(() => {
-    if (ready && !user) router.replace("/auth/login");
+    if (ready && !user) {
+      void router.replace("/auth/login");
+    }
   }, [ready, user, router]);
 
   /* Load profile from localStorage */
@@ -176,15 +206,30 @@ export default function AccountPage() {
     setProfileEdit(p);
   }, [user]);
 
-  const handleProfileSave = (e: React.FormEvent) => {
+  const handleProfileSave = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    setProfileError('');
-    if (!profileEdit.firstName.trim()) { setProfileError('First name is required'); return; }
-    if (!profileEdit.lastName.trim()) { setProfileError('Last name is required'); return; }
-    saveProfile(user!.id, { firstName: profileEdit.firstName.trim(), lastName: profileEdit.lastName.trim() });
-    setProfile({ firstName: profileEdit.firstName.trim(), lastName: profileEdit.lastName.trim() });
+    setProfileError("");
+    
+    if (!profileEdit.firstName.trim()) {
+      setProfileError("First name is required");
+      return;
+    }
+    if (!profileEdit.lastName.trim()) {
+      setProfileError("Last name is required");
+      return;
+    }
+    
+    const trimmedProfile: Profile = {
+      firstName: profileEdit.firstName.trim(),
+      lastName: profileEdit.lastName.trim(),
+    };
+    
+    saveProfile(user!.id, trimmedProfile);
+    setProfile(trimmedProfile);
     setProfileSaved(true);
-    setTimeout(() => setProfileSaved(false), 3000);
+    setTimeout(() => {
+      setProfileSaved(false);
+    }, 3000);
   };
 
   /* Fetch orders for stats */
@@ -201,7 +246,7 @@ export default function AccountPage() {
 
   if (!ready || !user) return null;
 
-  const totalSpent = orders.reduce((s, o) => s + o.total, 0);
+  const totalSpent = useMemo(() => orders.reduce((s, o) => s + o.total, 0), [orders]);
 
   return (
     <Container>
@@ -371,3 +416,4 @@ export default function AccountPage() {
     </Container>
   );
 }
+export default AccountPage;

@@ -49,7 +49,7 @@ const features: Feature[] = [
   },
 ];
 
-function FeaturesSection(): React.ReactNode {
+const FeaturesSection = (): React.ReactNode => {
   return (
     <section className="py-12 bg-[var(--color-bg)] rounded-lg border border-[var(--color-text)] border-opacity-10">
       <div className="text-center mb-12">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useMemo, useCallback, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -43,38 +43,49 @@ export default function Navbar(): React.ReactElement {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const handleResize = (): void => {
-      setIsDesktop(window.innerWidth >= 1024);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsDesktop(window.innerWidth >= 1024);
+      }, 150);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     setIsHydrated(true);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  const cartItemCount = items.reduce((sum, item) => sum + (item.qty || 0), 0);
+  const cartItemCount = useMemo(
+    () => items.reduce((sum, item) => sum + (item.qty || 0), 0),
+    [items]
+  );
 
-  const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSearch = useCallback((e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const trimmedQuery = searchQuery.trim();
     if (trimmedQuery) {
       const encoded = encodeURIComponent(trimmedQuery);
       router.push(`/products?search=${encoded}`);
+      setSearchQuery("");
     }
-  };
+  }, [searchQuery, router]);
 
-  const handleLogout = (): void => {
+  const handleLogout = useCallback((): void => {
     logout();
     setIsMenuOpen(false);
-  };
+  }, [logout]);
 
-  const toggleMenu = (): void => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = useCallback((): void => {
+    setIsMenuOpen((prev) => !prev);
+  }, []);
 
-  const closeMenu = (): void => {
+  const closeMenu = useCallback((): void => {
     setIsMenuOpen(false);
-  };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--color-bg)]/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm">

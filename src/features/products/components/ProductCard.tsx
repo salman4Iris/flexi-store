@@ -1,7 +1,7 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/store/cart";
 
@@ -15,6 +15,7 @@ export type ProductCardProps = {
   discount?: number; // optional explicit discount percent
   currency?: string; // ISO currency, default INR
   onAdd?: (id: string) => void;
+  priority?: boolean; // High fetch priority for above-fold images
 };
 
 function formatPrice(value: number, currency = "INR") {
@@ -25,7 +26,7 @@ function formatPrice(value: number, currency = "INR") {
   }
 }
 
-export default function ProductCard({
+const ProductCard = ({
   id,
   name,
   price,
@@ -35,42 +36,51 @@ export default function ProductCard({
   discount,
   currency = "INR",
   onAdd,
-}: ProductCardProps) {
+  priority = false,
+}: ProductCardProps): React.ReactElement => {
   const { add } = useCart();
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState<boolean>(false);
 
-  const computedDiscount =
-    typeof discount === "number"
-      ? discount
-      : originalPrice && originalPrice > price
+  const computedDiscount = (): number => {
+    if (typeof discount === "number") {
+      return discount;
+    }
+    return originalPrice && originalPrice > price
       ? Math.round(((originalPrice - price) / originalPrice) * 100)
       : 0;
+  };
 
-  const handleAdd = async () => {
+  const handleAdd = async (): Promise<void> => {
     if (adding) return;
     setAdding(true);
     try {
       add({ id, name, price });
       onAdd?.(id);
     } finally {
-      setTimeout(() => setAdding(false), 300);
+      setTimeout(() => {
+        setAdding(false);
+      }, 300);
     }
   };
+
+  const discount_value = computedDiscount();
 
   return (
     <article className="group bg-[var(--color-bg)] rounded-xl overflow-hidden shadow transition duration-300 hover:shadow-lg flex flex-col h-full">
       <Link href={`/products/${id}`} className="block">
         <figure className="relative overflow-hidden bg-[var(--color-bg)] border border-opacity-10 aspect-square">
-          {computedDiscount > 0 && (
+          {discount_value > 0 && (
             <span className="absolute top-2 left-2 z-10 text-xs font-semibold text-white px-2 py-1 rounded bg-primary">
-              -{computedDiscount}%
+              -{discount_value}%
             </span>
           )}
 
           <img
             src={image}
             alt={alt ?? name}
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "low"}
+            decoding="async"
             className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
           />
         </figure>
@@ -109,3 +119,5 @@ export default function ProductCard({
     </article>
   );
 }
+
+export default ProductCard;

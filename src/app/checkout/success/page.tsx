@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Container from "@/components/layout/Container";
 import Section from "@/components/layout/Section";
 import { Button } from "@/components/ui/Button";
@@ -24,7 +24,7 @@ type Order = {
   };
 };
 
-export default function CheckoutSuccessPage(): React.ReactElement {
+function CheckoutSuccessContent(): React.ReactElement {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const [order, setOrder] = useState<Order | null>(null);
@@ -329,5 +329,13 @@ export default function CheckoutSuccessPage(): React.ReactElement {
         </div>
       </Section>
     </Container>
+  );
+}
+
+export default function CheckoutSuccessPage(): React.ReactElement {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }

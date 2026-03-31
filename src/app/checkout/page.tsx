@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Container from '@/components/layout/Container';
 import Section from '@/components/layout/Section';
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
 		}
 	};
 
-	const subtotal = total();
+	const subtotal = useMemo(() => total(), [items]);
 	const shippingCost = 0;
 	const orderTotal = subtotal + shippingCost;
 

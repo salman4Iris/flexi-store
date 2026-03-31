@@ -1,5 +1,7 @@
 # Code Style & TypeScript Conventions
 
+**This document covers general code style conventions. For detailed ES6 and TypeScript patterns, see [es6-typescript.instructions.md](./es6-typescript.instructions.md).**
+
 ## TypeScript Fundamentals
 
 - **Strict mode enabled** — Use `strict: true` in `tsconfig.json`
@@ -298,4 +300,4 @@ async function createOrder(data: OrderInput): Promise<Order> {
 
 ---
 
-See also: [docs/architecture.md](./architecture.md) for feature structure and feature-based organization.
+See also: [docs/architecture.instructions.md](./architecture.instructions.md) for feature structure and feature-based organization.

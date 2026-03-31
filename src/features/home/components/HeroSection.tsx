@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
-function HeroSection(): React.ReactNode {
+const HeroSection = (): React.ReactNode =>{
   return (
     <section className="relative min-h-[500px] flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg overflow-hidden">
       <div className="absolute inset-0 -z-10 opacity-10">

@@ -8,33 +8,45 @@ export type ProductGridProps = {
   category?: string;
 };
 
-export default function ProductGrid({ category }: ProductGridProps): React.ReactNode {
+const ProductGrid = ({ category }: ProductGridProps): React.ReactNode => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    setError(null);
 
-    const endpoint = category
-      ? `/api/products?category=${encodeURIComponent(category)}`
-      : "/api/products";
+    const loadProducts = async (): Promise<void> => {
+      setLoading(true);
+      setError(null);
 
-    fetch(endpoint)
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to load");
-        return r.json();
-      })
-      .then((data) => {
-        if (mounted) setProducts(data || []);
-      })
-      .catch((e) => {
-        if (mounted) setError(String(e) || "Error loading products");
-      })
-      .finally(() => mounted && setLoading(false));
-    return () => {
+      const endpoint = category
+        ? `/api/products?category=${encodeURIComponent(category)}`
+        : "/api/products";
+
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+          throw new Error("Failed to load products");
+        }
+        const data = (await response.json()) as Product[];
+        if (mounted) {
+          setProducts(data ?? []);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : "Error loading products");
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadProducts();
+
+    return (): void => {
       mounted = false;
     };
   }, [category]);
@@ -50,10 +62,10 @@ export default function ProductGrid({ category }: ProductGridProps): React.React
     return (
       <div aria-busy="true" aria-live="polite" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="animate-pulse bg-[var(--color-bg)] rounded-xl p-4">
-            <div className="h-44 bg-[var(--color-text)] bg-opacity-10 rounded-md mb-3" />
-            <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-3/4 mb-2" />
-            <div className="h-4 bg-[var(--color-text)] bg-opacity-10 rounded w-1/2" />
+          <div key={i} className="animate-pulse bg-(--color-bg) rounded-xl p-4">
+            <div className="h-44 bg-(--color-text) bg-opacity-10 rounded-md mb-3" />
+            <div className="h-4 bg-(--color-text) bg-opacity-10 rounded w-3/4 mb-2" />
+            <div className="h-4 bg-(--color-text) bg-opacity-10 rounded w-1/2" />
           </div>
         ))}
       </div>
@@ -62,10 +74,12 @@ export default function ProductGrid({ category }: ProductGridProps): React.React
   return (
     <section aria-label="Products">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
+        {products.map((product, index) => (
+          <ProductCard key={product.id} {...product} priority={index < 4} />
         ))}
       </div>
     </section>
   );
 }
+
+export default ProductGrid;

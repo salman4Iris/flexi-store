@@ -1,12 +1,16 @@
 import React from "react";
 
-type Props = {
+type ContainerProps = {
   children: React.ReactNode;
   className?: string;
 };
 
-export default function Container({ children, className = "" }: Props) {
+const Container = ({ children, className = "" }: ContainerProps): React.ReactElement => {
   return (
-    <main className={`max-w-7xl mx-auto px-4 py-6 ${className}`}>{children}</main>
+    <main className={`max-w-7xl mx-auto px-4 py-6 ${className}`}>
+      {children}
+    </main>
   );
-}
+};
+
+export default Container;

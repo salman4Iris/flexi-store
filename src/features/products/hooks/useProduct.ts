@@ -9,7 +9,7 @@ export type UseProductReturn = {
   error: string | null;
 };
 
-export function useProduct(slug: string): UseProductReturn {
+export const useProduct = (slug: string): UseProductReturn => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +37,12 @@ export function useProduct(slug: string): UseProductReturn {
       }
     };
 
-    fetchProduct();
+    void fetchProduct();
 
-    return () => {
+    return (): void => {
       mounted = false;
     };
   }, [slug]);
 
   return { product, loading, error };
-}
+};

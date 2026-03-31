@@ -1,8 +1,12 @@
 "use client";
 
 import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import ProductGrid from "@/features/products/components/ProductGrid";
+
+const ProductGrid = dynamic(
+  () => import("@/features/products/components/ProductGrid"),
+);
 
 function formatCategoryLabel(category: string): string {
   return category

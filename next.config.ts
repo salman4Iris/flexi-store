@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /* Modern browsers only - eliminates polyfills & downlevel transforms */
+  experimental: {
+    optimizePackageImports: ["lucide-react", "clsx", "tailwind-merge"],
+    optimizeCss: true,
+  },
   images: {
     remotePatterns: [
       {

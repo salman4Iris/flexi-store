@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { ACTIVE_THEME, type ThemeName } from "@/config/theme";
 
 type ThemeContextType = {
@@ -12,10 +12,6 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const themeNames: ThemeName[] = ["default", "luxury", "minimal"];
-
-function isThemeName(value: string): value is ThemeName {
-  return themeNames.includes(value as ThemeName);
-}
 
 const themes: Record<ThemeName, Record<string, string>> = {
   default: {
@@ -38,15 +34,19 @@ const themes: Record<ThemeName, Record<string, string>> = {
   },
 };
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const ctx = useContext(ThemeContext);
   if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
   return ctx;
 }
 
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
+const isThemeName = (value: string): value is ThemeName => {
+  return themeNames.includes(value as ThemeName);
+};
+
+const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
   const [theme, setThemeState] = useState<ThemeName>(ACTIVE_THEME);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -54,27 +54,46 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
       if (storedTheme && isThemeName(storedTheme)) {
         setThemeState(storedTheme);
       }
-    } catch {}
+    } catch {
+      // Silently fail for localStorage errors
+    }
     setIsHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!isHydrated) return;
+
     const root = document.documentElement;
-    const vars = themes[theme] || themes.default;
-    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    const vars = themes[theme] ?? themes.default;
+    
+    Object.entries(vars).forEach(([k, v]) => {
+      root.style.setProperty(k, v);
+    });
+    
     root.setAttribute("data-theme", theme);
+    
     try {
       localStorage.setItem("flexi-theme", theme);
-    } catch {}
+    } catch {
+      // Silently fail for localStorage errors
+    }
   }, [theme, isHydrated]);
 
-  const setTheme = (t: ThemeName) => setThemeState(t);
-  const toggle = () => setThemeState((s) => (s === "default" ? "luxury" : "default"));
+  const setTheme = useCallback((t: ThemeName): void => {
+    setThemeState(t);
+  }, []);
+
+  const toggle = useCallback((): void => {
+    setThemeState((s) => (s === "default" ? "luxury" : "default"));
+  }, []);
+
+  const value: ThemeContextType = { theme, setTheme, toggle };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggle }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-}
+};
+
+export default ThemeProvider;

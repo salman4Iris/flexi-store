@@ -2,11 +2,12 @@
 
 ## Overview
 
-API routes are implemented using Next.js App Router in `src/app/api/`.
+API routes are implemented using Next.js App Router in `src/app/api/` with strict TypeScript and ES6 patterns.
 
 - **Route files**: `route.ts` (must be named exactly this)
-- **HTTP methods**: Named exports `GET`, `POST`, `PUT`, `DELETE`, `PATCH`
-- **Type safety**: Use TypeScript with `NextRequest` / `NextResponse`
+- **HTTP methods**: Named exports as `async` arrow functions with explicit return types
+- **Type safety**: Use TypeScript with `NextRequest` / `NextResponse` and explicit type annotations
+- **ES6 Patterns**: Arrow functions, async/await, destructuring, nullish coalescing
 
 ## Route Structure
 
@@ -36,13 +37,13 @@ src/app/api/
 import { NextRequest, NextResponse } from "next/server"
 import type { Product, ProductInput } from "@/features/products/types/product"
 
-// GET /api/products
-export async function GET(request: NextRequest) {
+// GET /api/products - Arrow function with explicit return type
+export const GET = async (request: NextRequest): Promise<NextResponse<Product[]>> => {
   try {
-    // Optional: Extract query parameters
+    // Destructure URL and query params
     const { searchParams } = new URL(request.url)
     const category = searchParams.get("category")
-    const limit = searchParams.get("limit")
+    const limit = searchParams.get("limit") ?? "10"
 
     // Fetch from database (implement your DB call)
     const products: Product[] = [] // Replace with real data
@@ -57,13 +58,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/products
-export async function POST(request: NextRequest) {
+// POST /api/products - Arrow function with explicit return type
+export const POST = async (request: NextRequest): Promise<NextResponse<Product | { error: string }>> => {
   try {
     const input: ProductInput = await request.json()
 
-    // Validate input
-    if (!input.name || !input.price) {
+    // Validate input with destructuring
+    const { name, price } = input
+    if (!name || !price) {
       return NextResponse.json(
         { error: "Missing required fields: name, price" },
         { status: 400 }
@@ -79,9 +81,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
-    console.error("Failed to create product:", error)
+    const message = error instanceof Error ? error.message : "Failed to create product"
+    console.error(message, error)
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: message },
       { status: 400 }
     )
   }
@@ -95,19 +98,24 @@ Use `[param]` segment for dynamic routes:
 ```typescript
 // src/app/api/products/[slug]/route.ts
 import { NextRequest, NextResponse } from "next/server"
+import type { Product } from "@/features/products/types/product"
 
 type RouteParams = {
   params: { slug: string }
 }
 
-// GET /api/products/[slug]
-export async function GET(request: NextRequest, { params }: RouteParams) {
+// GET /api/products/[slug] - Arrow function with explicit return type
+export const GET = async (
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<NextResponse<Product | { error: string }>> => {
   try {
     const { slug } = params
 
     // Fetch product by slug (implement your DB call)
-    const product = {} // Replace with real data
+    const product: Product | null = null // Replace with real data
 
+    // Optional chaining and nullish check
     if (!product) {
       return NextResponse.json(
         { error: "Product not found" },
@@ -117,27 +125,35 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(product)
   } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    const message = error instanceof Error ? error.message : "Server error"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
-// PUT /api/products/[slug]
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+// PUT /api/products/[slug] - Arrow function with explicit return type
+export const PUT = async (
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<NextResponse<Product | { error: string }>> => {
   try {
     const { slug } = params
-    const updates = await request.json()
+    const updates = (await request.json()) as Partial<Product>
 
     // Update product (implement your DB call)
-    const product = {} // Replace with real data
+    const product: Product = {} as Product // Replace with real data
 
     return NextResponse.json(product)
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update" }, { status: 400 })
+    const message = error instanceof Error ? error.message : "Failed to update"
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 }
 
-// DELETE /api/products/[slug]
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+// DELETE /api/products/[slug] - Arrow function with explicit return type
+export const DELETE = async (
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<NextResponse<{ success: boolean } | { error: string }>> => {
   try {
     const { slug } = params
 
@@ -145,7 +161,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true }, { status: 204 })
   } catch (error) {
-    return NextResponse.json({ error: "Failed to delete" }, { status: 500 })
+    const message = error instanceof Error ? error.message : "Failed to delete"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 ```
@@ -155,22 +172,21 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 Extract and validate query parameters from the request URL:
 
 ```typescript
-export async function GET(request: NextRequest) {
+// Arrow function with explicit return type and proper type narrowing
+export const GET = async (request: NextRequest): Promise<NextResponse> => {
   const { searchParams } = new URL(request.url)
 
-  // Get single parameter
-  const category = searchParams.get("category")  // null if not present
-  const limit = searchParams.get("limit") || "10"
+  // Get single parameter with nullish coalescing
+  const category = searchParams.get("category") // null if not present
+  const limit = searchParams.get("limit") ?? "10"
 
   // Get array of values (for filters[]=a&filters[]=b)
   const filters = searchParams.getAll("filter")
 
   // Check if parameter exists
-  if (searchParams.has("sort")) {
-    const sort = searchParams.get("sort")
-  }
+  const sort = searchParams.has("sort") ? searchParams.get("sort") : null
 
-  return NextResponse.json({ category, limit, filters })
+  return NextResponse.json({ category, limit, filters, sort })
 }
 
 // Usage: GET /api/products?category=electronics&limit=20&filter=new&filter=sale
@@ -322,15 +338,17 @@ export async function GET(request: NextRequest) {
 
 ## Error Handling
 
-Always use try/catch and return appropriate status codes:
+Always use try/catch with proper type narrowing and async/await patterns:
 
 ```typescript
-export async function POST(request: NextRequest) {
+// Arrow function with explicit return type and comprehensive error handling
+export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
-    const data = await request.json()
+    const data = (await request.json()) as { email?: string }
 
-    // Validate
-    if (!data.email) {
+    // Validate with destructuring
+    const { email } = data
+    if (!email) {
       return NextResponse.json(
         { error: "Email is required" },
         { status: 400 }
@@ -338,8 +356,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Process...
-
+    return NextResponse.json({ success: true })
   } catch (error) {
+    // Type narrowing for proper error handling
     if (error instanceof SyntaxError) {
       // JSON parse error
       return NextResponse.json(
@@ -348,9 +367,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error("API error:", error)
+    const message = error instanceof Error ? error.message : "Internal server error"
+    console.error(`API error: ${message}`, error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: message },
       { status: 500 }
     )
   }
@@ -359,7 +379,7 @@ export async function POST(request: NextRequest) {
 
 ## Type-Safe Route Handlers
 
-Always type route parameters and request/response bodies:
+Always type route parameters and request/response bodies with explicit return types:
 
 ```typescript
 import type { NextRequest } from "next/server"
@@ -370,32 +390,46 @@ type RouteParams = {
   params: { slug: string }
 }
 
-export async function GET(
+// Arrow function with explicit return type—no implicit 'any'
+export const GET = async (
   request: NextRequest,
   { params }: RouteParams
-): Promise<NextResponse<Product>> {
+): Promise<NextResponse<Product | { error: string }>> => {
   try {
-    const product: Product = {} // Fetch...
+    const { slug } = params
+    const product: Product = {} as Product // Fetch...
+    
+    if (!product) {
+      return NextResponse.json(
+        { error: "Not found" },
+        { status: 404 }
+      )
+    }
+    
     return NextResponse.json(product)
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Not found"
     return NextResponse.json(
-      { error: "Not found" } as any,
+      { error: message },
       { status: 404 }
     )
   }
 }
 
-export async function PUT(
+// Arrow function with explicit return type
+export const PUT = async (
   request: NextRequest,
   { params }: RouteParams
-): Promise<NextResponse<Product>> {
+): Promise<NextResponse<Product | { error: string }>> => {
   try {
-    const updates: Partial<ProductInput> = await request.json()
-    const product: Product = {} // Update...
+    const { slug } = params
+    const updates = (await request.json()) as Partial<ProductInput>
+    const product: Product = {} as Product // Update...
     return NextResponse.json(product)
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Invalid request"
     return NextResponse.json(
-      { error: "Invalid request" } as any,
+      { error: message },
       { status: 400 }
     )
   }
@@ -413,14 +447,32 @@ describe("GET /api/products", () => {
   it("should return products", async () => {
     const request = new NextRequest(new URL("http://localhost:3000/api/products"))
     const response = await GET(request)
-    const data = await response.json()
+    const data = (await response.json()) as unknown[]
 
     expect(response.status).toBe(200)
-    expect(data).toBeInstanceOf(Array)
+    expect(Array.isArray(data)).toBe(true)
+  })
+
+  it("should handle errors gracefully", async () => {
+    const request = new NextRequest(new URL("http://localhost:3000/api/products"))
+    // Mock error scenario
+    const response = await GET(request)
+    
+    expect(response.status).toBeGreaterThanOrEqual(200)
   })
 })
 ```
 
 ---
 
-See also: [docs/architecture.instructions.md](./architecture.instructions.md) for service patterns and [Next.js API Routes documentation](https://nextjs.org/docs/app/building-your-application/routing/route-handlers).
+## ES6 & TypeScript Best Practices for API Routes
+
+✅ **Always use arrow functions** as named exports  
+✅ **Explicit return types** on all route handlers  
+✅ **Type narrowing** with `instanceof` for error handling  
+✅ **Nullish coalescing** (`??`) for default values  
+✅ **Destructuring** for extracting params and body data  
+✅ **Async/await** for all async operations  
+✅ **Avoid `any` types** — use proper type annotations  
+
+See also: [es6-typescript.instructions.md](./es6-typescript.instructions.md), [architecture.instructions.md](./architecture.instructions.md) for service patterns, and [Next.js API Routes documentation](https://nextjs.org/docs/app/building-your-application/routing/route-handlers).

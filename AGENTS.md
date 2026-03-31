@@ -30,6 +30,7 @@ All UI components use **shadcn UI exclusively** styled with **Tailwind CSS**. Th
 
 | Topic | File | Key Rules |
 |-------|------|-----------|
+| **ES6 & TypeScript** | [es6-typescript.instructions.md](./docs/es6-typescript.instructions.md) | Arrow functions, explicit types, async/await, no `any`, strict mode |
 | **UI Components** | [ui-components.instructions.md](./docs/ui-components.instructions.md) | Use shadcn UI exclusively; no custom components |
 | **Code Style** | [code-style.instructions.md](./docs/code-style.instructions.md) | TypeScript strict mode, PascalCase components, camelCase functions |
 | **Architecture** | [architecture.instructions.md](./docs/architecture.instructions.md) | Feature-based organization; components, hooks, services, types per feature |

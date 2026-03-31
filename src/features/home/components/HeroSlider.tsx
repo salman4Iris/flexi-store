@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
@@ -56,9 +56,10 @@ const slides: Slide[] = [
 const SLIDE_DURATION = 5000; // 5 seconds per slide
 const TRANSITION_DURATION = 500; // 500ms transition
 
-export function HeroSlider(): React.ReactNode {
+const HeroSlider = (): React.ReactNode => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-rotate slides
   useEffect(() => {
@@ -72,15 +73,23 @@ export function HeroSlider(): React.ReactNode {
   // Handle slide change with transition
   const handleSlideChange = useCallback(
     (slideIndex: number) => {
-      if (isTransitioning) return;
-      setIsTransitioning(true);
-      setCurrentSlide(slideIndex);
-      setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
+      setCurrentSlide((prev) => {
+        if (isTransitioning || prev === slideIndex) return prev;
+        setIsTransitioning(true);
+        if (transitionTimeoutRef.current) {
+          clearTimeout(transitionTimeoutRef.current);
+        }
+        transitionTimeoutRef.current = setTimeout(
+          () => setIsTransitioning(false),
+          TRANSITION_DURATION,
+        );
+        return slideIndex;
+      });
     },
     [isTransitioning],
   );
 
-  const slide = slides[currentSlide];
+  const slide = useMemo(() => slides[currentSlide], [currentSlide]);
 
   return (
     <div className="relative min-h-125 flex items-center justify-center overflow-hidden rounded-lg">

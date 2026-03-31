@@ -1,11 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { notFound, useParams } from 'next/navigation';
 import { useProduct } from '@/features/products/hooks/useProduct';
-import { ProductDetails } from '@/features/products/components/ProductDetails';
 import Container from '@/components/layout/Container';
 import Section from '@/components/layout/Section';
+
+const ProductDetails = dynamic(
+  () => import('@/features/products/components/ProductDetails').then((module) => module.ProductDetails),
+);
 
 export default function ProductDetailPage(): React.ReactNode {
   const params = useParams();

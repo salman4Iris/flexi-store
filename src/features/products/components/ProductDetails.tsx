@@ -19,7 +19,7 @@ function formatPrice(value: number, currency: string = 'INR'): string {
   }
 }
 
-export function ProductDetails({ product }: ProductDetailsProps): React.ReactNode {
+export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNode => {
   const { add } = useCart();
   const [adding, setAdding] = useState<boolean>(false);
   const [savedForLater, setSavedForLater] = useState<boolean>(false);
@@ -54,6 +54,9 @@ export function ProductDetails({ product }: ProductDetailsProps): React.ReactNod
           <img
             src={product.image}
             alt={product.alt || product.name}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-contain p-8"
           />
           {discount > 0 && (

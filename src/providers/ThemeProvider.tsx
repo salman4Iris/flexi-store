@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { ACTIVE_THEME, type ThemeName } from "@/config/theme";
 
 type ThemeContextType = {
@@ -62,11 +62,23 @@ const getStoredTheme = (): ThemeName => {
 };
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-  const storedTheme = useMemo<ThemeName>(() => getStoredTheme(), []);
   const [themeState, setThemeState] = useState<ThemeName | null>(null);
-  const theme = themeState ?? storedTheme;
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const theme = themeState ?? ACTIVE_THEME;
 
+  // Initialize theme after hydration to prevent hydration mismatch
+  useEffect((): void => {
+    const storedTheme = getStoredTheme();
+    if (storedTheme !== ACTIVE_THEME) {
+      setThemeState(storedTheme);
+    }
+    setIsMounted(true);
+  }, []);
+
+  // Apply theme to DOM after hydration
   useEffect(() => {
+    if (!isMounted) return;
+
     const root = document.documentElement;
     const vars = themes[theme] ?? themes.default;
     
@@ -81,7 +93,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }): React.React
     } catch {
       // Silently fail for localStorage errors
     }
-  }, [theme]);
+  }, [theme, isMounted]);
 
   const setTheme = useCallback((t: ThemeName): void => {
     setThemeState(t);

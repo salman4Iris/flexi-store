@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useSyncExternalStore, type FormEvent } from "react";
+import { useState, useMemo, useCallback, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +20,7 @@ import Container from "@/components/layout/Container";
 import { useCart } from "@/store/cart";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 type NavItem = {
   label: string;
@@ -31,46 +32,15 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Account", href: "/account" },
 ];
 
-const subscribeToDesktopChanges = (callback: () => void): (() => void) => {
-  if (typeof window === "undefined") {
-    return (): void => {};
-  }
-
-  let timeoutId: NodeJS.Timeout;
-  const handleResize = (): void => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(callback, 150);
-  };
-
-  window.addEventListener("resize", handleResize);
-
-  return (): void => {
-    window.removeEventListener("resize", handleResize);
-    clearTimeout(timeoutId);
-  };
-};
-
-const getDesktopSnapshot = (): boolean => {
-  if (typeof window === "undefined") {
-    return true;
-  }
-
-  return window.innerWidth >= 1024;
-};
-
 const Navbar = (): React.ReactElement => {
   const { toggle, theme } = useTheme();
   const { user, logout } = useAuth();
   const { items } = useCart();
   const router = useRouter();
+  const isDesktop = useIsDesktop();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const isDesktop = useSyncExternalStore(
-    subscribeToDesktopChanges,
-    getDesktopSnapshot,
-    (): boolean => true,
-  );
 
   const cartItemCount = useMemo(
     () => items.reduce((sum, item) => sum + (item.qty || 0), 0),
@@ -105,7 +75,7 @@ const Navbar = (): React.ReactElement => {
       <Container className="py-4">
         <div className="flex items-center justify-between gap-6">
           {/* Logo & Mobile Menu Button */}
-          <div className="flex items-center gap-4" suppressHydrationWarning>
+          <div className="flex items-center gap-4">
             {!isDesktop && (
               <Button
                 variant="ghost"
@@ -135,7 +105,6 @@ const Navbar = (): React.ReactElement => {
               className="flex items-center gap-12"
               role="navigation"
               aria-label="Main navigation"
-              suppressHydrationWarning
             >
               {NAV_ITEMS.map((item) => (
                 <Link
@@ -152,7 +121,7 @@ const Navbar = (): React.ReactElement => {
 
           {/* Desktop Search */}
           {isDesktop && (
-            <form onSubmit={handleSearch} className="flex-1 max-w-xs" suppressHydrationWarning>
+            <form onSubmit={handleSearch} className="flex-1 max-w-xs">
               <div className="relative">
                 <Input
                   type="text"
@@ -177,7 +146,7 @@ const Navbar = (): React.ReactElement => {
           <div className="flex items-center gap-3">
             {/* Desktop User Menu */}
             {isDesktop && (
-              <div suppressHydrationWarning>
+              <div>
                 {user ? (
                   <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-800">
                     <span className="text-sm font-medium text-(--color-text)">
@@ -247,7 +216,6 @@ const Navbar = (): React.ReactElement => {
             className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800 space-y-3"
             role="navigation"
             aria-label="Mobile navigation"
-            suppressHydrationWarning
           >
             {/* Mobile Search */}
             <form onSubmit={handleSearch} className="mb-4">

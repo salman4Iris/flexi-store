@@ -26,6 +26,13 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - [ES6/TypeScript Compliance Analysis](./docs/reports/es6-typescript/ES6_COMPLIANCE_ANALYSIS.md)
 - [ES6/TypeScript Modernization Report](./docs/reports/es6-typescript/ES6_TYPESCRIPT_MODERNIZATION.md)
 
+## Documentation Structure
+
+- `docs/`
+	- `*.instructions.md` (coding standards and architecture guidance)
+	- `reports/es6-typescript/` (ES6/TypeScript analysis and modernization reports)
+	- `troubleshooting/hydration/` (hydration issue analysis and fixes)
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

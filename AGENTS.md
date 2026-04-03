@@ -40,6 +40,16 @@ All UI components use **shadcn UI exclusively** styled with **Tailwind CSS**. Th
 
 ---
 
+## Reports
+
+| Report | File |
+|--------|------|
+| Hydration Fix Summary | [HYDRATION_FIX_SUMMARY.md](./docs/troubleshooting/hydration/HYDRATION_FIX_SUMMARY.md) |
+| ES6 Compliance Analysis | [ES6_COMPLIANCE_ANALYSIS.md](./docs/reports/es6-typescript/ES6_COMPLIANCE_ANALYSIS.md) |
+| ES6 Modernization Report | [ES6_TYPESCRIPT_MODERNIZATION.md](./docs/reports/es6-typescript/ES6_TYPESCRIPT_MODERNIZATION.md) |
+
+---
+
 ## Core Standards at a Glance
 
 ### UI Components — shadcn UI + Tailwind CSS Only 🚫 NO CUSTOM UI

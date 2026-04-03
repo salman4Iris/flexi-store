@@ -21,12 +21,69 @@ type ShippingForm = {
 	pincode: string;
 };
 
+type CardForm = {
+	cardNumber: string;
+	expiry: string;
+	cvv: string;
+};
+
+type CheckoutFormErrors = Partial<ShippingForm & CardForm>;
+
 type PaymentMethod = 'cod' | 'card';
 
 const STATES = [
 	'Andhra Pradesh', 'Delhi', 'Gujarat', 'Karnataka', 'Kerala',
 	'Maharashtra', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal',
 ];
+
+const normalizeCardNumber = (value: string): string => {
+	return value.replace(/\D/g, '');
+};
+
+const formatCardNumber = (value: string): string => {
+	const digits = normalizeCardNumber(value).slice(0, 16);
+	const parts = digits.match(/.{1,4}/g);
+	return parts ? parts.join(' ') : '';
+};
+
+const formatExpiry = (value: string): string => {
+	const digits = value.replace(/\D/g, '').slice(0, 4);
+	if (digits.length <= 2) return digits;
+	return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+};
+
+const isLuhnValid = (cardNumber: string): boolean => {
+	const digits = normalizeCardNumber(cardNumber);
+	let total = 0;
+	let shouldDouble = false;
+
+	for (let i = digits.length - 1; i >= 0; i -= 1) {
+		const parsed = Number(digits[i]);
+		if (Number.isNaN(parsed)) return false;
+
+		let digit = parsed;
+		if (shouldDouble) {
+			digit *= 2;
+			if (digit > 9) digit -= 9;
+		}
+
+		total += digit;
+		shouldDouble = !shouldDouble;
+	}
+
+	return total % 10 === 0;
+};
+
+const isExpiryValid = (expiry: string): boolean => {
+	if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) return false;
+	const [monthPart, yearPart] = expiry.split('/');
+	const month = Number(monthPart);
+	const year = 2000 + Number(yearPart);
+	const now = new Date();
+	const expiryDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+	return expiryDate >= now;
+};
 
 const FieldError = ({ msg }: { msg?: string }): React.ReactElement | null => {
 	if (!msg) return null;
@@ -72,18 +129,50 @@ const CheckoutPage = (): React.ReactElement => {
 		state: '',
 		pincode: '',
 	});
-	const [formErrors, setFormErrors] = useState<Partial<ShippingForm>>({});
+	const [cardForm, setCardForm] = useState<CardForm>({
+		cardNumber: '',
+		expiry: '',
+		cvv: '',
+	});
+	const [formErrors, setFormErrors] = useState<CheckoutFormErrors>({});
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-	) => {
+	): void => {
 		const { name, value } = e.target;
 		setForm((prev) => ({ ...prev, [name]: value }));
 		setFormErrors((prev) => ({ ...prev, [name]: '' }));
 	};
 
+	const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		const { name, value } = e.target;
+
+		if (name === 'cardNumber') {
+			setCardForm((prev) => ({ ...prev, cardNumber: formatCardNumber(value) }));
+		} else if (name === 'expiry') {
+			setCardForm((prev) => ({ ...prev, expiry: formatExpiry(value) }));
+		} else {
+			setCardForm((prev) => ({ ...prev, cvv: value.replace(/\D/g, '').slice(0, 4) }));
+		}
+
+		setFormErrors((prev) => ({ ...prev, [name]: '' }));
+	};
+
+	const handlePaymentMethodChange = (method: PaymentMethod): void => {
+		setPaymentMethod(method);
+
+		if (method === 'cod') {
+			setFormErrors((prev) => ({
+				...prev,
+				cardNumber: '',
+				expiry: '',
+				cvv: '',
+			}));
+		}
+	};
+
 	const validate = (): boolean => {
-		const errs: Partial<ShippingForm> = {};
+		const errs: CheckoutFormErrors = {};
 		if (!form.fullName.trim()) errs.fullName = 'Full name is required';
 		if (!form.email.trim()) errs.email = 'Email is required';
 		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
@@ -96,11 +185,29 @@ const CheckoutPage = (): React.ReactElement => {
 		if (!form.state) errs.state = 'Please select a state';
 		if (!form.pincode.trim()) errs.pincode = 'Pincode is required';
 		else if (!/^\d{6}$/.test(form.pincode)) errs.pincode = 'Enter a valid 6-digit pincode';
+
+		if (paymentMethod === 'card') {
+			const cardNumberDigits = normalizeCardNumber(cardForm.cardNumber);
+			if (!cardNumberDigits) {
+				errs.cardNumber = 'Card number is required';
+			} else if (cardNumberDigits.length !== 16) {
+				errs.cardNumber = 'Card number must be 16 digits';
+			} else if (!isLuhnValid(cardNumberDigits)) {
+				errs.cardNumber = 'Enter a valid card number';
+			}
+
+			if (!cardForm.expiry.trim()) {
+				errs.expiry = 'Expiry date is required';
+			} else if (!isExpiryValid(cardForm.expiry)) {
+				errs.expiry = 'Enter a valid expiry date (MM/YY)';
+			}
+		}
+
 		setFormErrors(errs);
 		return Object.keys(errs).length === 0;
 	};
 
-	const handlePlaceOrder = async () => {
+	const handlePlaceOrder = async (): Promise<void> => {
 		setError('');
 		if (!token || !user) {
 			setError('You must be logged in to place an order');
@@ -297,7 +404,7 @@ const CheckoutPage = (): React.ReactElement => {
 											name="payment"
 											value="cod"
 											checked={paymentMethod === 'cod'}
-											onChange={() => setPaymentMethod('cod')}
+											onChange={() => handlePaymentMethodChange('cod')}
 											className="accent-primary"
 										/>
 										<div>
@@ -321,7 +428,7 @@ const CheckoutPage = (): React.ReactElement => {
 											name="payment"
 											value="card"
 											checked={paymentMethod === 'card'}
-											onChange={() => setPaymentMethod('card')}
+											onChange={() => handlePaymentMethodChange('card')}
 											className="accent-primary"
 										/>
 										<div>
@@ -334,19 +441,37 @@ const CheckoutPage = (): React.ReactElement => {
 
 									{paymentMethod === 'card' && (
 										<div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
-											<FormField label="Card Number" id="cardNumber">
+											<FormField label="Card Number" id="cardNumber" error={formErrors.cardNumber}>
 												<Input
 													id="cardNumber"
+													name="cardNumber"
 													placeholder="1234 5678 9012 3456"
 													maxLength={19}
+													value={cardForm.cardNumber}
+													onChange={handleCardChange}
 												/>
 											</FormField>
 											<div className="grid grid-cols-2 gap-3">
-												<FormField label="Expiry" id="expiry">
-													<Input id="expiry" placeholder="MM / YY" maxLength={7} />
+												<FormField label="Expiry" id="expiry" error={formErrors.expiry}>
+													<Input
+														id="expiry"
+														name="expiry"
+														placeholder="MM/YY"
+														maxLength={5}
+														value={cardForm.expiry}
+														onChange={handleCardChange}
+													/>
 												</FormField>
 												<FormField label="CVV" id="cvv">
-													<Input id="cvv" placeholder="•••" maxLength={4} type="password" />
+													<Input
+														id="cvv"
+														name="cvv"
+														placeholder="•••"
+														maxLength={4}
+														type="password"
+														value={cardForm.cvv}
+														onChange={handleCardChange}
+													/>
 												</FormField>
 											</div>
 											<p className="text-xs text-muted-foreground">

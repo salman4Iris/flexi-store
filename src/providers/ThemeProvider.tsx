@@ -62,23 +62,11 @@ const getStoredTheme = (): ThemeName => {
 };
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-  const [themeState, setThemeState] = useState<ThemeName | null>(null);
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-  const theme = themeState ?? ACTIVE_THEME;
-
-  // Initialize theme after hydration to prevent hydration mismatch
-  useEffect((): void => {
-    const storedTheme = getStoredTheme();
-    if (storedTheme !== ACTIVE_THEME) {
-      setThemeState(storedTheme);
-    }
-    setIsMounted(true);
-  }, []);
+  const [themeState, setThemeState] = useState<ThemeName>(() => getStoredTheme());
+  const theme = themeState;
 
   // Apply theme to DOM after hydration
   useEffect(() => {
-    if (!isMounted) return;
-
     const root = document.documentElement;
     const vars = themes[theme] ?? themes.default;
     
@@ -93,7 +81,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }): React.React
     } catch {
       // Silently fail for localStorage errors
     }
-  }, [theme, isMounted]);
+  }, [theme]);
 
   const setTheme = useCallback((t: ThemeName): void => {
     setThemeState(t);

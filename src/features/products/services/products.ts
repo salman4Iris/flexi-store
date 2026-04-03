@@ -19,35 +19,6 @@ export const getProducts = async (
   );
 };
 
-const safeDecode = (value: string): string => {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-};
-
-const toSlug = (value: string): string => {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-};
-
 export const getProduct = async (slug: string): Promise<Product | null> => {
-  const normalizedSlug = toSlug(safeDecode(slug));
-  const byId = getProductById(safeDecode(slug));
-
-  if (byId) {
-    return byId;
-  }
-
-  const product = mockProducts.find((item) => {
-    const normalizedId = toSlug(item.id);
-    const normalizedName = toSlug(item.name);
-    return normalizedId === normalizedSlug || normalizedName === normalizedSlug;
-  });
-
-  return product ?? null;
+  return getProductById(slug) ?? null;
 };

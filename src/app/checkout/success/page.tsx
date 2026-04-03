@@ -8,6 +8,7 @@ import Section from "@/components/layout/Section";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Package, MapPin, AlertCircle } from "lucide-react";
+import { useAuth } from "@/providers/AuthProvider";
 
 type OrderItem = { id: string; name: string; price: number; qty: number };
 type Order = {
@@ -27,64 +28,74 @@ type Order = {
 const CheckoutSuccessContent = (): React.ReactElement => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const { token } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(!orderId);
-  const orderError = orderId ? null : "No order ID provided";
+  const [loading, setLoading] = useState(!!orderId);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const orderError = orderId ? fetchError : "No order ID provided";
 
   useEffect(() => {
     if (!orderId) {
+      setLoading(false);
       return;
     }
 
     let isMounted = true;
-    let orderData: Order | null = null;
 
-    // Try to get order data from sessionStorage first (passed from checkout)
-    const sessionOrder = sessionStorage.getItem("lastOrder");
-    if (sessionOrder) {
-      try {
-        const parsedOrder = JSON.parse(sessionOrder);
-        if (parsedOrder.id === orderId) {
-          orderData = parsedOrder;
-          sessionStorage.removeItem("lastOrder");
+    const loadOrder = async (): Promise<void> => {
+      // Try to get order data from sessionStorage first (passed from checkout)
+      const sessionOrder = sessionStorage.getItem("lastOrder");
+      if (sessionOrder) {
+        try {
+          const parsedOrder = JSON.parse(sessionOrder) as Order;
+          if (parsedOrder.id === orderId) {
+            sessionStorage.removeItem("lastOrder");
+            if (isMounted) {
+              setOrder(parsedOrder);
+              setLoading(false);
+            }
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to parse session order:", e);
         }
-      } catch (e) {
-        // Continue to fetch from API if session data is invalid
-        console.error("Failed to parse session order:", e);
       }
-    }
 
-    // If no session data, use mock data for demo purposes
-    if (!orderData) {
-      orderData = {
-        id: orderId,
-        items: [
-          { id: "1", name: "Wireless Headphones", price: 2999, qty: 1 },
-          { id: "2", name: "USB-C Cable", price: 499, qty: 2 },
-        ],
-        total: 3997,
-        createdAt: new Date().toISOString(),
-        shippingAddress: {
-          fullName: "Rahul Sharma",
-          address: "Flat 4B, Green Park Apartments, MG Road",
-          city: "Mumbai",
-          state: "Maharashtra",
-          pincode: "400001",
-        },
-      };
-    }
+      // Fallback: fetch the real order from the API
+      if (!token) {
+        if (isMounted) {
+          setFetchError("Please log in to view your order.");
+          setLoading(false);
+        }
+        return;
+      }
 
-    if (isMounted) {
-      // React 18 automatically batches these updates
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOrder(orderData);
-      setLoading(false);
-    }
+      try {
+        const res = await fetch("/api/orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const orders = (await res.json()) as Order[];
+        const found = orders.find((o) => o.id === orderId) ?? null;
+        if (isMounted) {
+          setOrder(found);
+          if (!found) setFetchError("Order not found.");
+          setLoading(false);
+        }
+      } catch {
+        if (isMounted) {
+          setFetchError("Could not load order details. Please try again.");
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadOrder();
 
     return () => {
       isMounted = false;
     };
-  }, [orderId]);
+  }, [orderId, token]);
 
   if (loading) {
     return (

@@ -8,6 +8,7 @@ type CartContextType = {
   items: CartItem[];
   add: (item: Omit<CartItem, 'qty'>, qty?: number) => void;
   remove: (id: string) => void;
+  updateQty: (id: string, qty: number) => void;
   clear: () => void;
   total: () => number;
 };
@@ -39,13 +40,21 @@ export const CartProvider = ({ children }: { children: React.ReactNode }): React
     setItems((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const updateQty = (id: string, qty: number): void => {
+    if (qty < 1) {
+      remove(id);
+      return;
+    }
+    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, qty } : p)));
+  };
+
   const clear = (): void => {
     setItems([]);
   };
 
   const total = (): number => items.reduce((s, i) => s + i.price * i.qty, 0);
 
-  const value: CartContextType = { items, add, remove, clear, total };
+  const value: CartContextType = { items, add, remove, updateQty, clear, total };
 
   return (
     <CartContext.Provider value={value}>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const CartPage = (): React.ReactElement => {
-  const { items, remove, clear, total } = useCart();
+  const { items, remove, updateQty, clear, total } = useCart();
 
   if (!items.length) {
     return (
@@ -33,12 +33,31 @@ const CartPage = (): React.ReactElement => {
           <div className="space-y-3">
             {items.map((it) => (
               <Card key={it.id}>
-                <CardContent className="pt-6 flex justify-between items-center">
-                  <div>
+                <CardContent className="pt-6 flex justify-between items-center gap-4">
+                  <div className="flex-1">
                     <div className="font-semibold">{it.name}</div>
-                    <div className="text-sm text-muted-foreground">Qty: {it.qty}</div>
+                    <div className="text-sm text-muted-foreground">₹{it.price} each</div>
                   </div>
-                  <div className="text-right">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-lg"
+                      onClick={() => updateQty(it.id, it.qty - 1)}
+                    >
+                      −
+                    </Button>
+                    <span className="w-8 text-center font-semibold">{it.qty}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-lg"
+                      onClick={() => updateQty(it.id, it.qty + 1)}
+                    >
+                      +
+                    </Button>
+                  </div>
+                  <div className="text-right min-w-[80px]">
                     <div className="font-bold">₹{it.price * it.qty}</div>
                     <Button
                       variant="ghost"

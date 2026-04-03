@@ -1,4 +1,3 @@
-import { getProductById, mockProducts } from "@/features/products/services/mockProducts";
 import type { Product } from "@/features/products/types/product";
 
 export type GetProductsOptions = {
@@ -8,17 +7,33 @@ export type GetProductsOptions = {
 export const getProducts = async (
   options: GetProductsOptions = {},
 ): Promise<Product[]> => {
-  const normalizedCategory = options.category?.trim().toLowerCase();
+  const params = new URLSearchParams();
 
-  if (!normalizedCategory) {
-    return [...mockProducts];
+  if (options.category?.trim()) {
+    params.set("category", options.category.trim());
   }
 
-  return mockProducts.filter(
-    (product) => product.category.toLowerCase() === normalizedCategory,
-  );
+  const query = params.toString();
+  const url = query ? `/api/products?${query}` : "/api/products";
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  return (await response.json()) as Product[];
 };
 
 export const getProduct = async (slug: string): Promise<Product | null> => {
-  return getProductById(slug) ?? null;
+  const response = await fetch(`/api/products/${slug}`);
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch product");
+  }
+
+  return (await response.json()) as Product;
 };

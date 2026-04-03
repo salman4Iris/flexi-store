@@ -5,61 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/card";
-
-type Category = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  href: string;
-};
-
-const categories: Category[] = [
-  {
-    id: "electronics",
-    name: "Electronics",
-    description: "Latest gadgets and devices",
-    image: "/images/categories/electronics.svg",
-    href: "/products?category=electronics",
-  },
-  {
-    id: "fashion",
-    name: "Fashion",
-    description: "Trendy clothing and accessories",
-    image: "/images/categories/fashion.svg",
-    href: "/products?category=fashion",
-  },
-  {
-    id: "home",
-    name: "Home & Living",
-    description: "Furniture and decor items",
-    image: "/images/categories/home.svg",
-    href: "/products?category=home",
-  },
-  {
-    id: "beauty",
-    name: "Beauty",
-    description: "Skincare and cosmetics",
-    image: "/images/categories/beauty.svg",
-    href: "/products?category=beauty",
-  },
-  {
-    id: "sports",
-    name: "Sports",
-    description: "Fitness and outdoor gear",
-    image: "/images/categories/sports.svg",
-    href: "/products?category=sports",
-  },
-  {
-    id: "books",
-    name: "Books",
-    description: "Best sellers and classics",
-    image: "/images/categories/books.svg",
-    href: "/products?category=books",
-  },
-];
+import { useCategories } from "@/features/home/hooks/useCategories";
 
 const CategoriesSection = (): React.ReactElement => {
+  const { categories, loading, error } = useCategories();
+
   return (
     <section
       id="featured"
@@ -74,7 +24,20 @@ const CategoriesSection = (): React.ReactElement => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true">
+          {Array.from({ length: 6 }, (_, index) => (
+            <div key={`category-skeleton-${index}`} className="h-80 rounded-lg bg-(--color-bg) animate-pulse" />
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <p className="text-center text-(--color-text) opacity-75">{error}</p>
+      )}
+
+      {!loading && !error && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((category, index) => {
           const isPriority = index < 3;
           return (
@@ -107,7 +70,8 @@ const CategoriesSection = (): React.ReactElement => {
             </Link>
           );
         })}
-      </div>
+        </div>
+      )}
     </section>
   );
 };

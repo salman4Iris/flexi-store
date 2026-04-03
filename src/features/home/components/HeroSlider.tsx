@@ -1,78 +1,48 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-
-type Slide = {
-  id: string;
-  title: string;
-  subtitle: string;
-  gradient: string;
-  category: string;
-  categoryLabel: string;
-  icon: string;
-  image: string;
-};
-
-const slides: Slide[] = [
-  {
-    id: "electronics",
-    title: "Latest Tech Gadgets",
-    subtitle:
-      "Discover cutting-edge electronics and smart devices for modern living",
-    gradient: "from-blue-50 to-indigo-50",
-    category: "electronics",
-    categoryLabel: "Electronics",
-    icon: "📱",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=600&fit=crop",
-  },
-  {
-    id: "fashion",
-    title: "Trendy Fashion Collections",
-    subtitle: "Explore exclusive clothing and accessories from top brands",
-    gradient: "from-purple-50 to-pink-50",
-    category: "fashion",
-    categoryLabel: "Fashion",
-    icon: "👗",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-  },
-  {
-    id: "home",
-    title: "Home & Living Essentials",
-    subtitle: "Transform your space with our curated furniture and decor",
-    gradient: "from-green-50 to-emerald-50",
-    category: "home",
-    categoryLabel: "Home & Living",
-    icon: "🏠",
-    image:
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop",
-  },
-];
+import { useHeroSlides } from "@/features/home/hooks/useHeroSlides";
 
 const SLIDE_DURATION = 5000; // 5 seconds per slide
 const TRANSITION_DURATION = 500; // 500ms transition
 
 const HeroSlider = (): React.ReactNode => {
+  const { slides, loading, error } = useHeroSlides();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-rotate slides
   useEffect(() => {
+    if (slides.length <= 1) {
+      return;
+    }
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, SLIDE_DURATION);
 
     return () => clearInterval(interval);
+  }, [slides.length]);
+
+  useEffect(() => {
+    return (): void => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Handle slide change with transition
   const handleSlideChange = useCallback(
     (slideIndex: number) => {
+      if (slides.length === 0) {
+        return;
+      }
+
       setCurrentSlide((prev) => {
         if (isTransitioning || prev === slideIndex) return prev;
         setIsTransitioning(true);
@@ -86,10 +56,22 @@ const HeroSlider = (): React.ReactNode => {
         return slideIndex;
       });
     },
-    [isTransitioning],
+    [isTransitioning, slides.length],
   );
 
-  const slide = useMemo(() => slides[currentSlide], [currentSlide]);
+  if (loading) {
+    return <div className="min-h-125 rounded-lg animate-pulse bg-(--color-bg)" aria-busy="true" />;
+  }
+
+  if (error || slides.length === 0) {
+    return (
+      <div className="min-h-125 rounded-lg flex items-center justify-center text-(--color-text) opacity-75">
+        {error ?? "No hero content available."}
+      </div>
+    );
+  }
+
+  const slide = slides[currentSlide];
 
   return (
     <div className="relative min-h-125 flex items-center justify-center overflow-hidden rounded-lg">

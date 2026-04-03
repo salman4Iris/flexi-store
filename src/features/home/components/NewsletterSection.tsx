@@ -16,12 +16,18 @@ const NewsletterSection = (): React.ReactNode => {
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      if (!email) {
-        setError('Please enter a valid email');
-        setLoading(false);
+      const payload = (await response.json()) as { message: string };
+
+      if (!response.ok) {
+        setError(payload.message ?? 'Failed to subscribe. Please try again.');
         return;
       }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useCallback, useSyncExternalStore } from "react";
 import { ACTIVE_THEME, type ThemeName } from "@/config/theme";
 
 type ThemeContextType = {
@@ -10,8 +10,14 @@ type ThemeContextType = {
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const THEME_EVENT = "flexi-theme-change";
+const THEME_STORAGE_KEY = "flexi-theme";
+const FALLBACK_THEME: ThemeName = ACTIVE_THEME;
 
 const themeNames: ThemeName[] = ["default", "luxury", "minimal"];
+
+let cachedTheme: ThemeName = FALLBACK_THEME;
+let cachedRawTheme: string | null = null;
 
 const themes: Record<ThemeName, Record<string, string>> = {
   default: {
@@ -44,26 +50,47 @@ const isThemeName = (value: string): value is ThemeName => {
   return themeNames.includes(value as ThemeName);
 };
 
-const getStoredTheme = (): ThemeName => {
-  if (typeof window === "undefined") {
-    return ACTIVE_THEME;
+const getThemeFromStorage = (rawTheme: string | null): ThemeName => {
+  if (rawTheme === cachedRawTheme) {
+    return cachedTheme;
   }
 
+  const nextTheme: ThemeName = rawTheme && isThemeName(rawTheme) ? rawTheme : FALLBACK_THEME;
+  cachedRawTheme = rawTheme;
+  cachedTheme = nextTheme;
+
+  return nextTheme;
+};
+
+const getThemeServerSnapshot = (): ThemeName => {
+  return FALLBACK_THEME;
+};
+
+const getThemeSnapshot = (): ThemeName => {
   try {
-    const storedTheme = localStorage.getItem("flexi-theme");
-    if (storedTheme && isThemeName(storedTheme)) {
-      return storedTheme;
-    }
+    return getThemeFromStorage(localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
     // Silently fail for localStorage errors
+    cachedRawTheme = null;
+    cachedTheme = FALLBACK_THEME;
+    return FALLBACK_THEME;
   }
+};
 
-  return ACTIVE_THEME;
+const subscribeTheme = (callback: () => void): (() => void) => {
+  window.addEventListener(THEME_EVENT, callback);
+
+  return (): void => {
+    window.removeEventListener(THEME_EVENT, callback);
+  };
+};
+
+const dispatchThemeChange = (): void => {
+  window.dispatchEvent(new Event(THEME_EVENT));
 };
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
-  const [themeState, setThemeState] = useState<ThemeName>(() => getStoredTheme());
-  const theme = themeState;
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getThemeServerSnapshot);
 
   // Apply theme to DOM after hydration
   useEffect(() => {
@@ -77,19 +104,27 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }): React.React
     root.setAttribute("data-theme", theme);
     
     try {
-      localStorage.setItem("flexi-theme", theme);
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch {
       // Silently fail for localStorage errors
     }
   }, [theme]);
 
   const setTheme = useCallback((t: ThemeName): void => {
-    setThemeState(t);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, t);
+      cachedRawTheme = t;
+      cachedTheme = t;
+    } catch {
+      // Silently fail for localStorage errors
+    }
+    dispatchThemeChange();
   }, []);
 
   const toggle = useCallback((): void => {
-    setThemeState((s) => (s === "default" ? "luxury" : "default"));
-  }, []);
+    const nextTheme: ThemeName = theme === "default" ? "luxury" : "default";
+    setTheme(nextTheme);
+  }, [theme, setTheme]);
 
   const value: ThemeContextType = { theme, setTheme, toggle };
 

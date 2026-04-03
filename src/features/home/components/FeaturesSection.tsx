@@ -2,54 +2,11 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-
-type Feature = {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-};
-
-const features: Feature[] = [
-  {
-    id: 'free-shipping',
-    title: 'Free Shipping',
-    description: 'Enjoy free shipping on orders over ₹500. Fast and reliable delivery to your doorstep.',
-    icon: '🚚',
-  },
-  {
-    id: 'secure-payment',
-    title: 'Secure Payment',
-    description: 'Your transactions are protected with industry-leading encryption and security protocols.',
-    icon: '🔒',
-  },
-  {
-    id: 'easy-returns',
-    title: 'Easy Returns',
-    description: '30-day hassle-free returns. If you are not satisfied, we will make it right.',
-    icon: '↩️',
-  },
-  {
-    id: 'customer-support',
-    title: '24/7 Support',
-    description: 'Our dedicated support team is available 24/7 to help with any questions or concerns.',
-    icon: '💬',
-  },
-  {
-    id: 'authentic-products',
-    title: 'Authentic Products',
-    description: '100% authentic products from verified sellers and trusted brands.',
-    icon: '✅',
-  },
-  {
-    id: 'best-prices',
-    title: 'Best Prices',
-    description: 'We offer competitive prices and regular deals to give you the best value for money.',
-    icon: '💰',
-  },
-];
+import { useStoreFeatures } from '@/features/home/hooks/useStoreFeatures';
 
 const FeaturesSection = (): React.ReactNode => {
+  const { features, loading, error } = useStoreFeatures();
+
   return (
     <section className="py-12 bg-(--color-bg) rounded-lg border border-(--color-text) border-opacity-10">
       <div className="text-center mb-12">
@@ -57,7 +14,20 @@ const FeaturesSection = (): React.ReactNode => {
         <p className="text-lg text-(--color-text) opacity-75">Experience shopping like never before with our premium features</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" aria-busy="true">
+          {Array.from({ length: 6 }, (_, index) => (
+            <div key={`feature-skeleton-${index}`} className="h-48 rounded-lg bg-(--color-bg) animate-pulse" />
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <p className="text-center text-(--color-text) opacity-75">{error}</p>
+      )}
+
+      {!loading && !error && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature) => (
           <Card
             key={feature.id}
@@ -70,7 +40,8 @@ const FeaturesSection = (): React.ReactNode => {
             </CardContent>
           </Card>
         ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

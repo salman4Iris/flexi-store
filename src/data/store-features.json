@@ -1,0 +1,38 @@
+[
+  {
+    "id": "free-shipping",
+    "title": "Free Shipping",
+    "description": "Enjoy free shipping on orders over ₹500. Fast and reliable delivery to your doorstep.",
+    "icon": "🚚"
+  },
+  {
+    "id": "secure-payment",
+    "title": "Secure Payment",
+    "description": "Your transactions are protected with industry-leading encryption and security protocols.",
+    "icon": "🔒"
+  },
+  {
+    "id": "easy-returns",
+    "title": "Easy Returns",
+    "description": "30-day hassle-free returns. If you are not satisfied, we will make it right.",
+    "icon": "↩️"
+  },
+  {
+    "id": "customer-support",
+    "title": "24/7 Support",
+    "description": "Our dedicated support team is available 24/7 to help with any questions or concerns.",
+    "icon": "💬"
+  },
+  {
+    "id": "authentic-products",
+    "title": "Authentic Products",
+    "description": "100% authentic products from verified sellers and trusted brands.",
+    "icon": "✅"
+  },
+  {
+    "id": "best-prices",
+    "title": "Best Prices",
+    "description": "We offer competitive prices and regular deals to give you the best value for money.",
+    "icon": "💰"
+  }
+]

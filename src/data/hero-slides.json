@@ -1,0 +1,32 @@
+[
+  {
+    "id": "electronics",
+    "title": "Latest Tech Gadgets",
+    "subtitle": "Discover cutting-edge electronics and smart devices for modern living",
+    "gradient": "from-blue-50 to-indigo-50",
+    "category": "electronics",
+    "categoryLabel": "Electronics",
+    "icon": "📱",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=600&fit=crop"
+  },
+  {
+    "id": "fashion",
+    "title": "Trendy Fashion Collections",
+    "subtitle": "Explore exclusive clothing and accessories from top brands",
+    "gradient": "from-purple-50 to-pink-50",
+    "category": "fashion",
+    "categoryLabel": "Fashion",
+    "icon": "👗",
+    "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
+  },
+  {
+    "id": "home",
+    "title": "Home & Living Essentials",
+    "subtitle": "Transform your space with our curated furniture and decor",
+    "gradient": "from-green-50 to-emerald-50",
+    "category": "home",
+    "categoryLabel": "Home & Living",
+    "icon": "🏠",
+    "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop"
+  }
+]

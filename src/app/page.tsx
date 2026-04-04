@@ -1,10 +1,9 @@
-"use client";
-
 import React from "react";
 import dynamic from "next/dynamic";
 import Container from "@/components/layout/Container";
 import Section from "@/components/layout/Section";
 import HeroSlider from "@/features/home/components/HeroSlider";
+import type { HomePageData } from "@/features/home/types";
 
 const CategoriesSection = dynamic(
   () => import("@/features/home/components/CategoriesSection"),
@@ -22,16 +21,48 @@ const ProductGrid = dynamic(
   () => import("@/features/products/components/ProductGrid"),
 );
 
-const Home = (): React.ReactNode => {
+const Home = async (): Promise<React.ReactNode> => {
+  let homeData: HomePageData | null = null;
+  let error: string | null = null;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/home`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch home page data");
+    }
+
+    homeData = (await response.json()) as HomePageData;
+  } catch (err) {
+    console.error("Error fetching home page data:", err);
+    error = "Failed to load home page data";
+  }
+
+  if (error || !homeData) {
+    return (
+      <Container>
+        <Section>
+          <div className="text-center py-12">
+            <p className="text-red-500">
+              {error || "Unable to load page content"}
+            </p>
+          </div>
+        </Section>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       {/* Auto-rotating Hero Slider */}
       <Section>
-        <HeroSlider />
+        <HeroSlider slides={homeData.heroSlides} />
       </Section>
       {/* Featured Collections */}
       <Section>
-        <CategoriesSection />
+        <CategoriesSection categories={homeData.categories} />
       </Section>
 
       {/* Featured Products */}
@@ -46,13 +77,13 @@ const Home = (): React.ReactNode => {
               items
             </p>
           </div>
-          <ProductGrid />
+          <ProductGrid products={homeData.products} />
         </div>
       </Section>
 
       {/* Why Shop With Us */}
       <Section>
-        <FeaturesSection />
+        <FeaturesSection features={homeData.storeFeatures} />
       </Section>
 
       {/* Newsletter Section */}

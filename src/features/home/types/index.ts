@@ -23,3 +23,21 @@ export type StoreFeature = {
   description: string;
   icon: string;
 };
+
+export type HomePageData = {
+  heroSlides: Slide[];
+  categories: Category[];
+  products: Array<{
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+    category: string;
+    alt?: string;
+    originalPrice?: number;
+    discount?: number;
+    currency?: string;
+  }>;
+  storeFeatures: StoreFeature[];
+};

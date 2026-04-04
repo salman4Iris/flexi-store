@@ -7,6 +7,8 @@ import type { Product } from "@/features/products/types/product";
 
 export type ProductGridProps = {
   category?: string;
+  search?: string;
+  products?: Product[];
 };
 
 const PRODUCT_GRID_SKELETON_KEYS: string[] = [
@@ -20,12 +22,17 @@ const PRODUCT_GRID_SKELETON_KEYS: string[] = [
   'product-skeleton-8',
 ];
 
-const ProductGrid = ({ category }: ProductGridProps): React.ReactNode => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+const ProductGrid = ({ category, search, products: initialProducts }: ProductGridProps): React.ReactNode => {
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
+  const [loading, setLoading] = useState<boolean>(!initialProducts);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If products are provided as props, don't fetch
+    if (initialProducts !== undefined) {
+      return;
+    }
+
     let mounted = true;
 
     const loadProducts = async (): Promise<void> => {
@@ -33,7 +40,7 @@ const ProductGrid = ({ category }: ProductGridProps): React.ReactNode => {
       setError(null);
 
       try {
-        const data = await getProducts({ category });
+        const data = await getProducts({ category, search });
         if (mounted) {
           setProducts(data ?? []);
         }
@@ -53,7 +60,7 @@ const ProductGrid = ({ category }: ProductGridProps): React.ReactNode => {
     return (): void => {
       mounted = false;
     };
-  }, [category]);
+  }, [category, search, initialProducts]);
 
   if (error)
     return (
@@ -72,6 +79,17 @@ const ProductGrid = ({ category }: ProductGridProps): React.ReactNode => {
             <div className="h-4 bg-(--color-text) bg-opacity-10 rounded w-1/2" />
           </div>
         ))}
+      </div>
+    );
+
+  if (products.length === 0)
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground text-lg">
+          {search
+            ? `No products found matching "${search}".`
+            : "No products found."}
+        </p>
       </div>
     );
 

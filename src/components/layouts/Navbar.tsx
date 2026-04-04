@@ -11,15 +11,13 @@ import {
   Sun,
   LogOut,
   LogIn,
-  Search,
   User,
 } from "lucide-react";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useAuth } from "@/providers/AuthProvider";
-import Container from "@/components/layout/Container";
 import { useCart } from "@/store/cart";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import SearchBar from "@/components/layouts/SearchBar";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 type NavItem = {
@@ -36,26 +34,14 @@ const Navbar = (): React.ReactElement => {
   const { toggle, theme } = useTheme();
   const { user, logout } = useAuth();
   const { items } = useCart();
-  const router = useRouter();
   const isDesktop = useIsDesktop();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const cartItemCount = useMemo(
     () => items.reduce((sum, item) => sum + (item.qty || 0), 0),
     [items]
   );
-
-  const handleSearch = useCallback((e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    const trimmedQuery = searchQuery.trim();
-    if (trimmedQuery) {
-      const encoded = encodeURIComponent(trimmedQuery);
-      router.push(`/products?search=${encoded}`);
-      setSearchQuery("");
-    }
-  }, [searchQuery, router]);
 
   const handleLogout = useCallback((): void => {
     logout();
@@ -71,8 +57,8 @@ const Navbar = (): React.ReactElement => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-(--color-bg)/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm">
-      <Container className="py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-(--color-bg)/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-6">
           {/* Logo & Mobile Menu Button */}
           <div className="flex items-center gap-4">
@@ -120,27 +106,7 @@ const Navbar = (): React.ReactElement => {
           )}
 
           {/* Desktop Search */}
-          {isDesktop && (
-            <form onSubmit={handleSearch} className="flex-1 max-w-xs">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label="Search products"
-                  className="pr-10"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Submit search"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              </div>
-            </form>
-          )}
+          {isDesktop && <SearchBar onSearchSubmit={closeMenu} />}
 
           {/* User & Actions */}
           <div className="flex items-center gap-3">
@@ -218,25 +184,9 @@ const Navbar = (): React.ReactElement => {
             aria-label="Mobile navigation"
           >
             {/* Mobile Search */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label="Search products"
-                  className="pr-10"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  aria-label="Submit search"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              </div>
-            </form>
+            <div className="mb-4">
+              <SearchBar onSearchSubmit={closeMenu} />
+            </div>
 
             {/* Mobile Menu Items */}
             {NAV_ITEMS.map((item) => (
@@ -299,7 +249,7 @@ const Navbar = (): React.ReactElement => {
             </div>
           </nav>
         )}
-      </Container>
+      </div>
     </header>
   );
 };

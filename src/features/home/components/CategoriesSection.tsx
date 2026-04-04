@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useCategories } from "@/features/home/hooks/useCategories";
+import type { Category } from "@/features/home/types";
 
-const CategoriesSection = (): React.ReactElement => {
-  const { categories, loading, error } = useCategories();
+interface CategoriesSectionProps {
+  categories: Category[];
+}
 
+const CategoriesSection: React.FC<CategoriesSectionProps> = ({ categories }) => {
   return (
     <section
       id="featured"
@@ -24,52 +26,46 @@ const CategoriesSection = (): React.ReactElement => {
         </p>
       </div>
 
-      {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true">
-          {Array.from({ length: 6 }, (_, index) => (
-            <div key={`category-skeleton-${index}`} className="h-80 rounded-lg bg-(--color-bg) animate-pulse" />
-          ))}
-        </div>
+      {categories.length === 0 && (
+        <p className="text-center text-(--color-text) opacity-75">
+          No categories available
+        </p>
       )}
 
-      {error && (
-        <p className="text-center text-(--color-text) opacity-75">{error}</p>
-      )}
-
-      {!loading && !error && (
+      {categories.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category, index) => {
-          const isPriority = index < 3;
-          return (
-            <Link key={category.id} href={category.href}>
-              <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer text-(--color-text)">
-                <CardContent className="pt-6">
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    width={800}
-                    height={600}
-                    fetchPriority={isPriority ? "high" : "low"}
-                    className="w-full h-48 object-cover rounded-md mb-4"
-                    priority={isPriority}
-                  />
-                  <h3 className="text-xl font-bold text-(--color-text) mb-2 group-hover:opacity-80 transition-opacity">
-                    {category.name}
-                  </h3>
-                  <p className="text-(--color-text) mb-4">
-                    {category.description}
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full text-(--color-text)"
-                  >
-                    Explore
-                  </Button>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+          {categories.map((category, index) => {
+            const isPriority = index < 3;
+            return (
+              <Link key={category.id} href={category.href}>
+                <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer text-(--color-text)">
+                  <CardContent className="pt-6">
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      width={800}
+                      height={600}
+                      fetchPriority={isPriority ? "high" : "low"}
+                      className="w-full h-48 object-cover rounded-md mb-4"
+                      priority={isPriority}
+                    />
+                    <h3 className="text-xl font-bold text-(--color-text) mb-2 group-hover:opacity-80 transition-opacity">
+                      {category.name}
+                    </h3>
+                    <p className="text-(--color-text) mb-4">
+                      {category.description}
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="w-full text-(--color-text)"
+                    >
+                      Explore
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       )}
     </section>

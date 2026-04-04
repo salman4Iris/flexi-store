@@ -18,19 +18,26 @@ const formatCategoryLabel = (category: string): string => {
 const ProductsPageContent = (): React.ReactNode => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category") ?? undefined;
-  const heading = category ? `${formatCategoryLabel(category)} Products` : "All Products";
+  const search = searchParams.get("search") ?? undefined;
+
+  let heading = "All Products";
+  let description = "Browse our complete collection of featured products.";
+
+  if (search) {
+    heading = `Search Results for "${search}"`;
+    description = "Browse the results of your search.";
+  } else if (category) {
+    heading = `${formatCategoryLabel(category)} Products`;
+    description = `Browse image-rich picks from our ${formatCategoryLabel(category)} collection.`;
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">{heading}</h1>
-        <p className="text-sm text-muted-foreground">
-          {category
-            ? `Browse image-rich picks from our ${formatCategoryLabel(category)} collection.`
-            : "Browse our complete collection of featured products."}
-        </p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      <ProductGrid category={category} />
+      <ProductGrid category={category} search={search} />
     </div>
   );
 };

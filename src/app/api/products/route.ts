@@ -7,15 +7,25 @@ export const GET = async (
 ): Promise<NextResponse<Product[] | { message: string }>> => {
   try {
     const category = request.nextUrl.searchParams.get("category")?.trim().toLowerCase();
+    const search = request.nextUrl.searchParams.get("search")?.trim().toLowerCase();
     const products = await getProductCatalog();
 
-    if (!category) {
-      return NextResponse.json(products);
+    let filteredProducts = products;
+
+    if (category) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.category.toLowerCase() === category,
+      );
     }
 
-    const filteredProducts = products.filter(
-      (product) => product.category.toLowerCase() === category,
-    );
+    if (search) {
+      filteredProducts = filteredProducts.filter(
+        (product) =>
+          product.name.toLowerCase().includes(search) ||
+          product.description.toLowerCase().includes(search) ||
+          product.category.toLowerCase().includes(search),
+      );
+    }
 
     return NextResponse.json(filteredProducts);
   } catch (error) {

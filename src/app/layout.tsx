@@ -36,7 +36,7 @@ const RootLayout = ({ children }: RootLayoutProps): React.ReactElement => {
           <AuthProvider>
             <CartProvider>
               <Navbar />
-              <div className="max-w-7xl mx-auto px-4 py-6">{children}</div>
+              <div className="pt-20 max-w-7xl mx-auto px-4 py-6">{children}</div>
               <Footer />
             </CartProvider>
           </AuthProvider>

@@ -2,6 +2,7 @@ import type { Product } from "@/features/products/types/product";
 
 export type GetProductsOptions = {
   category?: string;
+  search?: string;
 };
 
 export const getProducts = async (
@@ -11,6 +12,10 @@ export const getProducts = async (
 
   if (options.category?.trim()) {
     params.set("category", options.category.trim());
+  }
+
+  if (options.search?.trim()) {
+    params.set("search", options.search.trim());
   }
 
   const query = params.toString();

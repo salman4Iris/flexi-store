@@ -17,8 +17,8 @@ const NewsletterSection = dynamic(
   () => import("@/features/home/components/NewsletterSection"),
 );
 
-const ProductGrid = dynamic(
-  () => import("@/features/products/components/ProductGrid"),
+const ProductCarousel = dynamic(
+  () => import("@/features/products/components/ProductCarousel"),
 );
 
 const Home = async (): Promise<React.ReactNode> => {
@@ -77,7 +77,7 @@ const Home = async (): Promise<React.ReactNode> => {
               items
             </p>
           </div>
-          <ProductGrid products={homeData.products} />
+          <ProductCarousel products={homeData.products} />
         </div>
       </Section>
 

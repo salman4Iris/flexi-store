@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/store/cart';
+import ImageCarousel from './ImageCarousel';
 import type { Product } from '@/features/products/types/product';
 
 export type ProductDetailsProps = {
@@ -50,21 +50,11 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       {/* Product Image Section */}
       <div className="flex flex-col gap-4">
-        <div className="relative bg-(--color-bg) border border-(--color-text) border-opacity-10 rounded-lg overflow-hidden flex items-center justify-center aspect-square">
-          <Image
-            src={product.image}
-            alt={product.alt || product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="w-full h-full object-contain p-8"
-            priority
-          />
-          {discount > 0 && (
-            <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              {discount}% OFF
-            </div>
-          )}
-        </div>
+        <ImageCarousel
+          images={[product.image]}
+          alt={product.alt || product.name}
+          discount={discount}
+        />
       </div>
 
       {/* Product Info Section */}

@@ -6,6 +6,7 @@ import { notFound, useParams } from 'next/navigation';
 import { useProduct } from '@/features/products/hooks/useProduct';
 import Container from '@/components/layout/Container';
 import Section from '@/components/layout/Section';
+import RecommendedProducts from '@/features/products/components/RecommendedProducts';
 
 const ProductDetails = dynamic(
   () => import('@/features/products/components/ProductDetails').then((module) => module.ProductDetails),
@@ -69,17 +70,11 @@ const ProductDetailPage = (): React.ReactElement => {
 
         {/* Related Products Section */}
         <div className="mt-16 pt-8 border-t border-(--color-text) border-opacity-10">
-          <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-(--color-bg) border border-(--color-text) border-opacity-10 rounded-lg h-48 flex items-center justify-center text-muted-foreground"
-              >
-                Related Product {i}
-              </div>
-            ))}
-          </div>
+          <RecommendedProducts
+            currentProductId={product.id}
+            category={product.category}
+            limit={4}
+          />
         </div>
       </Section>
     </Container>

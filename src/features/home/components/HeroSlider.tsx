@@ -18,6 +18,8 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const touchStartXRef = useRef<number>(0);
+    const touchStartYRef = useRef<number>(0);
 
     // Auto-rotate slides
     useEffect(() => {
@@ -63,6 +65,36 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
       [isTransitioning, slides.length],
     );
 
+    // Touch handlers for swipe support
+    const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+      touchStartXRef.current = e.touches[0].clientX;
+      touchStartYRef.current = e.touches[0].clientY;
+    }, []);
+
+    const handleTouchEnd = useCallback(
+      (e: React.TouchEvent<HTMLDivElement>) => {
+        if (slides.length <= 1) return;
+
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const diffX = touchStartXRef.current - touchEndX;
+        const diffY = Math.abs(touchStartYRef.current - touchEndY);
+
+        // Only trigger swipe if horizontal movement is greater than vertical
+        // and the swipe distance is significant (at least 50px)
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > diffY) {
+          if (diffX > 0) {
+            // Swiped left, go to next slide
+            handleSlideChange((currentSlide + 1) % slides.length);
+          } else {
+            // Swiped right, go to previous slide
+            handleSlideChange((currentSlide - 1 + slides.length) % slides.length);
+          }
+        }
+      },
+      [currentSlide, slides.length, handleSlideChange],
+    );
+
     if (slides.length === 0) {
       return (
         <div className="min-h-125 rounded-lg flex items-center justify-center text-(--color-text) opacity-75">
@@ -77,6 +109,8 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
       <div
         ref={ref}
         className="relative min-h-125 flex items-center justify-center overflow-hidden rounded-lg"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Animated background gradient */}
         <div

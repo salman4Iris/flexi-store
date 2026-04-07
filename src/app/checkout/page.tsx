@@ -207,6 +207,29 @@ const CheckoutPage = (): React.ReactElement => {
 		return Object.keys(errs).length === 0;
 	};
 
+	const isFormValid = (): boolean => {
+		// Check shipping fields
+		if (!form.fullName.trim()) return false;
+		if (!form.email.trim()) return false;
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return false;
+		if (!form.phone.trim()) return false;
+		if (!/^\d{10}$/.test(form.phone.replace(/\s/g, ''))) return false;
+		if (!form.address.trim()) return false;
+		if (!form.city.trim()) return false;
+		if (!form.state) return false;
+		if (!form.pincode.trim()) return false;
+		if (!/^\d{6}$/.test(form.pincode)) return false;
+
+		// Check payment-specific fields
+		if (paymentMethod === 'card') {
+			const cardNumberDigits = normalizeCardNumber(cardForm.cardNumber);
+			if (!cardNumberDigits || cardNumberDigits.length !== 16 || !isLuhnValid(cardNumberDigits)) return false;
+			if (!cardForm.expiry.trim() || !isExpiryValid(cardForm.expiry)) return false;
+		}
+
+		return true;
+	};
+
 	const handlePlaceOrder = async (): Promise<void> => {
 		setError('');
 		if (!token || !user) {
@@ -539,7 +562,7 @@ const CheckoutPage = (): React.ReactElement => {
 									{/* CTA */}
 									<Button
 										onClick={handlePlaceOrder}
-										disabled={loading}
+										disabled={loading || !isFormValid()}
 										className="w-full"
 									>
 										{loading ? 'Placing Order…' : 'Place Order'}
@@ -553,7 +576,7 @@ const CheckoutPage = (): React.ReactElement => {
 							</Card>
 
 							<Link href="/cart" className="block">
-								<Button variant="outline" className="w-full">
+								<Button type="button" variant="outline" className="w-full">
 									← Back to Cart
 								</Button>
 							</Link>

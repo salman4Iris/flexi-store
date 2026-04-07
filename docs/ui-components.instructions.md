@@ -424,6 +424,134 @@ If shadcn doesn't have a component you need:
 
 ---
 
+## Mobile & Responsive Design: Touch Sliders
+
+**Mobile views MUST use touch sliders (carousels) for product and category widgets.** This ensures optimal UX on touch devices and prevents horizontal scrolling issues.
+
+### Requirements
+
+- **Mobile breakpoints** (`sm:` and below): Use touch-enabled carousel components
+- **Product widgets**: Always render as a touch slider on mobile (e.g., hero slides, product recommendations)
+- **Category widgets**: Always render as a touch slider on mobile instead of horizontal grids
+- **Desktop** (`md:` and above): Can use grid layout or carousel as appropriate
+
+### Example: MobileCarousel Component
+
+The `MobileCarousel` component at `src/features/home/components/MobileCarousel.tsx` is the pattern to follow:
+
+```typescript
+// Feature-specific touch-enabled carousel
+import React, { useState, useCallback, useRef } from "react"
+import type { ReactNode } from "react"
+
+interface MobileCarouselProps<T> {
+  items: T[]
+  renderItem: (item: T, isTransitioning: boolean) => ReactNode
+  itemsPerSlide?: number
+}
+
+// Arrow function with forwardRef for touch handling
+const MobileCarousel = React.forwardRef<
+  HTMLDivElement,
+  MobileCarouselProps<any>
+>(({ items, renderItem, itemsPerSlide = 1 }, ref) => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0)
+  const touchStartXRef = useRef<number>(0)
+
+  // Touch handlers for swipe gestures
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
+    touchStartXRef.current = e.touches[0]?.clientX ?? 0
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>): void => {
+    const touchEndX = e.changedTouches[0]?.clientX ?? 0
+    const diff = touchStartXRef.current - touchEndX
+    
+    if (Math.abs(diff) > 50) { // Swipe threshold
+      if (diff > 0) {
+        // Swiped left, move to next
+        setCurrentSlide((prev) => (prev + itemsPerSlide) % items.length)
+      } else {
+        // Swiped right, move to previous
+        setCurrentSlide((prev) => 
+          (prev - itemsPerSlide + items.length) % items.length
+        )
+      }
+    }
+  }
+
+  return (
+    <div
+      ref={ref}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="w-full overflow-hidden"
+    >
+      {/* Carousel content */}
+    </div>
+  )
+})
+
+MobileCarousel.displayName = "MobileCarousel"
+export { MobileCarousel }
+```
+
+### Usage Pattern
+
+```typescript
+// In product listing or category page
+import { MobileCarousel } from "@/features/home/components/MobileCarousel"
+import { ProductCard } from "@/features/products/components/ProductCard"
+
+type ProductListProps = {
+  products: Product[]
+}
+
+// Arrow function component with explicit types
+const ProductWidget = ({ products }: ProductListProps): React.ReactNode => {
+  return (
+    <>
+      {/* Mobile: Touch slider */}
+      <div className="sm:hidden">
+        <MobileCarousel
+          items={products}
+          renderItem={(product) => (
+            <ProductCard key={product.id} product={product} />
+          )}
+        />
+      </div>
+
+      {/* Desktop: Grid layout */}
+      <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </>
+  )
+}
+
+export { ProductWidget }
+```
+
+### Accessibility & Touch
+
+- Add `aria-label` to carousel controls for screen readers
+- Support both touch gestures and keyboard navigation (arrow keys)
+- Ensure minimum touch target size: 44×44px (WCAG 2.1 recommendation)
+- Test on actual touch devices, not just browser emulation
+
+### Third-Party Carousel Libraries
+
+For complex carousel needs, approved libraries:
+- **Embla Carousel** — lightweight, accessible, touch-friendly
+- **Swiper** — feature-rich, good mobile UX
+- **React Slick** — mature, widely used
+
+Always pair with [shadcn UI components](https://ui.shadcn.com) for controls and styling.
+
+---
+
 ## ES6 & TypeScript Requirements for UI Components
 
 ✅ **Arrow functions** for all components  

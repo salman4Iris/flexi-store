@@ -4,6 +4,7 @@ import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import ThemeProvider from "@/providers/ThemeProvider";
 import AuthProvider from "@/providers/AuthProvider";
+import { NextAuthSessionProvider } from "@/providers/NextAuthSessionProvider";
 import { CartProvider } from "@/store/cart";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
@@ -32,15 +33,17 @@ const RootLayout = ({ children }: RootLayoutProps): React.ReactElement => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-        <ThemeProvider>
-          <AuthProvider>
-            <CartProvider>
-              <Navbar />
-              <div className="pt-20 max-w-7xl mx-auto px-4 py-6">{children}</div>
-              <Footer />
-            </CartProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <NextAuthSessionProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Navbar />
+                <div className="pt-20 max-w-7xl mx-auto px-4 py-6">{children}</div>
+                <Footer />
+              </CartProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

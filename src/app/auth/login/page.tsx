@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/providers/AuthProvider';
+import { signIn } from 'next-auth/react';
 
 
 
@@ -17,6 +18,7 @@ const LoginPage = (): React.ReactElement => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [oauthLoading, setOauthLoading] = useState<string | null>(null);
     const router = useRouter();
     const { login } = useAuth();
 
@@ -53,6 +55,22 @@ const LoginPage = (): React.ReactElement => {
         }
     };
 
+    const handleSocialLogin = async (provider: 'google' | 'linkedin'): Promise<void> => {
+        setOauthLoading(provider);
+        try {
+            const result = await signIn(provider, { redirect: false, callbackUrl: '/' });
+            if (result?.ok) {
+                router.push('/');
+            } else if (result?.error) {
+                setError(`${provider} login failed: ${result.error}`);
+            }
+        } catch (err) {
+            setError(`${provider} login error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        } finally {
+            setOauthLoading(null);
+        }
+    };
+
     return (
         <Container>
             <Section>
@@ -86,6 +104,39 @@ const LoginPage = (): React.ReactElement => {
                                     {loading ? 'Logging in...' : 'Login'}
                                 </Button>
                             </form>
+
+                            {/* Social Login Divider */}
+                            <div className="relative my-6">
+                                <div className="absolute inset-0 flex items-center">
+                                    <span className="w-full border-t border-gray-300" />
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                </div>
+                            </div>
+
+                            {/* Social Login Buttons */}
+                            <div className="space-y-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => void handleSocialLogin('google')}
+                                    disabled={oauthLoading !== null}
+                                >
+                                    {oauthLoading === 'google' ? 'Signing in with Google...' : '🔵 Google'}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => void handleSocialLogin('linkedin')}
+                                    disabled={oauthLoading !== null}
+                                >
+                                    {oauthLoading === 'linkedin' ? 'Signing in with LinkedIn...' : '🔗 LinkedIn'}
+                                </Button>
+                            </div>
+
                             <p className="mt-4 text-center text-sm text-muted-foreground">
                                 Don&apos;t have an account?{' '}
                                 <Link href="/auth/register" className="text-primary underline hover:underline">

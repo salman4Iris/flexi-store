@@ -45,12 +45,12 @@ const NewsletterSection = (): React.ReactNode => {
   };
 
   return (
-    <section className="py-12 bg-linear-to-r from-blue-600 to-indigo-600 rounded-lg">
+    <section className="py-12 bg-(--color-primary) rounded-lg">
       <div className="max-w-2xl mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
           Subscribe to Our Newsletter
         </h2>
-        <p className="text-lg text-blue-100 mb-8">
+        <p className="text-lg text-white/80 mb-8">
           Get exclusive deals, product updates, and special offers delivered to your inbox.
         </p>
 
@@ -61,25 +61,25 @@ const NewsletterSection = (): React.ReactNode => {
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             disabled={loading}
-            className="bg-white dark:bg-(--color-bg) border-0 text-(--color-text) placeholder-(--color-text) placeholder-opacity-50"
+            className="bg-(--color-bg) border-0 text-(--color-text) placeholder-(--color-text) placeholder-opacity-50"
             aria-label="Email address for newsletter"
           />
           <Button
             type="submit"
             disabled={loading}
-            className="bg-white dark:bg-(--color-primary) text-(--color-text) dark:text-white hover:bg-blue-50 dark:hover:bg-primary/90 font-semibold px-8 whitespace-nowrap"
+            className="bg-(--color-bg) text-(--color-text) hover:bg-(--color-bg)/90 dark:bg-white dark:text-(--color-primary) dark:hover:bg-white/90 font-semibold px-8 whitespace-nowrap"
           >
             {loading ? 'Subscribing...' : 'Subscribe'}
           </Button>
         </form>
 
         {success && (
-          <p className="mt-4 text-green-100 font-semibold">
+          <p className="mt-4 text-white/80 font-semibold">
             ✓ Successfully subscribed! Check your email for updates.
           </p>
         )}
 
-        {error && <p className="mt-4 text-red-100 font-semibold">✗ {error}</p>}
+        {error && <p className="mt-4 text-white/70 font-semibold">✗ {error}</p>}
       </div>
     </section>
   );

@@ -79,7 +79,7 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
               )}
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
-              <div className="text-sm text-green-600 font-medium">
+              <div className="text-sm text-(--color-text)/70 font-medium">
                 Save {formatPrice(product.originalPrice - product.price, product.currency)}
               </div>
             )}
@@ -125,9 +125,9 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
           </div>
 
           {/* Shipping Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
-            <h3 className="text-sm font-semibold text-blue-900">Free Shipping</h3>
-            <p className="text-sm text-blue-800">
+          <div className="bg-(--color-bg) border border-(--color-primary)/20 rounded-lg p-4 space-y-2">
+            <h3 className="text-sm font-semibold text-(--color-text)">Free Shipping</h3>
+            <p className="text-sm text-(--color-text)/80">
               Free delivery on orders over ₹500. Delivery within 3-5 business days.
             </p>
           </div>

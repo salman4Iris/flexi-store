@@ -82,7 +82,7 @@ const SearchBar = ({ onSearchSubmit }: SearchBarProps): ReactElement => {
 
         {/* Search Suggestions Dropdown */}
         {showSuggestions && searchQuery.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-(--color-bg) border border-(--color-primary)/20 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
             {loading && (
               <div className="px-4 py-3 text-sm text-muted-foreground text-center">
                 Loading suggestions...
@@ -104,7 +104,7 @@ const SearchBar = ({ onSearchSubmit }: SearchBarProps): ReactElement => {
                       onClick={() =>
                         handleSuggestionClick(product.name, product.id)
                       }
-                      className="w-full px-4 py-2 text-sm text-left text-(--color-text) hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"
+                      className="w-full px-4 py-2 text-sm text-left text-(--color-text) hover:bg-(--color-bg)/80 transition-colors flex items-center gap-3"
                     >
                       <div className="flex-1">
                         <div className="font-medium truncate">
@@ -131,7 +131,7 @@ const SearchBar = ({ onSearchSubmit }: SearchBarProps): ReactElement => {
 
             {/* View All Results Link */}
             {!loading && !error && suggestions.length > 0 && (
-              <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-800">
+              <div className="border-t border-(--color-primary)/20 px-4 py-2 bg-(--color-bg)/50">
                 <button
                   type="button"
                   onClick={() => {
@@ -143,7 +143,7 @@ const SearchBar = ({ onSearchSubmit }: SearchBarProps): ReactElement => {
                   }}
                   className="w-full text-sm text-(--color-primary) hover:opacity-80 transition-opacity font-medium"
                 >
-                  View all results for "{searchQuery}"
+                  View all results for &quot;{searchQuery}&quot;
                 </button>
               </div>
             )}

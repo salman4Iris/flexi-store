@@ -95,7 +95,7 @@ const ImageCarousel = React.forwardRef<HTMLDivElement, ImageCarouselProps>(
 
         {/* Discount badge */}
         {discount && discount > 0 && (
-          <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          <div className="absolute top-4 right-4 bg-(--color-primary) text-white px-3 py-1 rounded-full text-sm font-semibold">
             {discount}% OFF
           </div>
         )}

@@ -122,7 +122,9 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }): React.React
   }, []);
 
   const toggle = useCallback((): void => {
-    const nextTheme: ThemeName = theme === "default" ? "luxury" : "default";
+    const currentIndex = themeNames.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themeNames.length;
+    const nextTheme = themeNames[nextIndex];
     setTheme(nextTheme);
   }, [theme, setTheme]);
 

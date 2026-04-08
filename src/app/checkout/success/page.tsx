@@ -152,7 +152,7 @@ const CheckoutSuccessContent = (): React.ReactElement => {
           {/* Success Header */}
           <div className="text-center mb-12">
             <div className="flex justify-center mb-4">
-              <CheckCircle2 className="w-16 h-16 text-green-600" />
+              <CheckCircle2 className="w-16 h-16 text-(--color-primary)" />
             </div>
             <h1 className="text-3xl font-bold mb-2 text-(--color-text)">
               Order Placed Successfully!
@@ -281,7 +281,7 @@ const CheckoutSuccessContent = (): React.ReactElement => {
                     </div>
                     <div className="flex justify-between text-(--color-text) opacity-75">
                       <span>Shipping</span>
-                      <span className="text-green-600 font-medium">Free</span>
+                      <span className="text-(--color-text)/70 font-medium">Free</span>
                     </div>
                     <div className="flex justify-between text-(--color-text) opacity-75">
                       <span>Tax</span>
@@ -296,11 +296,11 @@ const CheckoutSuccessContent = (): React.ReactElement => {
                     </div>
                   </div>
 
-                  <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 mt-4">
-                    <p className="text-xs font-medium text-green-800 dark:text-green-200">
+                  <div className="bg-(--color-bg) border border-(--color-primary)/20 rounded-lg p-3 mt-4">
+                    <p className="text-xs font-medium text-(--color-text)">
                       ✓ Payment confirmed
                     </p>
-                    <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                    <p className="text-xs text-(--color-text)/80 mt-1">
                       Your order is being prepared for shipment
                     </p>
                   </div>

@@ -23,7 +23,7 @@ type Order = {
 
 const OrderStatusBadge = (): React.ReactElement => {
   return (
-    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+    <span className="inline-flex items-center rounded-full bg-(--color-primary) bg-opacity-20 px-2.5 py-0.5 text-xs font-medium text-(--color-primary)">
       Delivered
     </span>
   );

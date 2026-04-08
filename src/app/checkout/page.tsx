@@ -544,7 +544,7 @@ const CheckoutPage = (): React.ReactElement => {
 										</div>
 										<div className="flex justify-between text-muted-foreground">
 											<span>Shipping</span>
-											<span className="text-green-600 font-medium">Free</span>
+											<span className="text-(--color-text)/70 font-medium">Free</span>
 										</div>
 										<div className="flex justify-between font-semibold text-base border-t pt-2 mt-1">
 											<span>Total</span>

@@ -120,8 +120,8 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
 
         {/* Decorative blobs */}
         <div className="absolute inset-0 -z-10 opacity-10">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute top-20 right-20 w-72 h-72 bg-(--color-primary) rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-(--color-primary) rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
         </div>
 
         {/* Product Image */}
@@ -138,7 +138,7 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
               priority
             />
             {/* Image fade overlay */}
-            <div className="absolute inset-0 bg-linear-to-l from-transparent to-white opacity-60 z-10"></div>
+            <div className="absolute inset-0 bg-linear-to-l from-transparent to-(--color-bg) opacity-60 z-10"></div>
           </div>
         </div>
 
@@ -195,7 +195,7 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
           onClick={() =>
             handleSlideChange((currentSlide - 1 + slides.length) % slides.length)
           }
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-(--color-bg)/30 hover:bg-(--color-bg)/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
           aria-label="Previous slide"
           disabled={isTransitioning}
         >
@@ -203,7 +203,7 @@ const HeroSlider = React.forwardRef<HTMLDivElement, HeroSliderProps>(
         </button>
         <button
           onClick={() => handleSlideChange((currentSlide + 1) % slides.length)}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-(--color-bg)/30 hover:bg-(--color-bg)/50 text-(--color-text) p-3 rounded-full transition-colors disabled:opacity-50"
           aria-label="Next slide"
           disabled={isTransitioning}
         >

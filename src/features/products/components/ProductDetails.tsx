@@ -117,7 +117,7 @@ export const ProductDetails = ({ product }: ProductDetailsProps): React.ReactNod
             <Button
               onClick={handleSaveForLater}
               variant={savedForLater ? 'default' : 'outline'}
-              className="flex-1"
+              className="px-4 py-6"
               aria-label={savedForLater ? 'Saved' : 'Save for later'}
             >
               {savedForLater ? '❤' : '🤍'}

@@ -127,51 +127,13 @@ const MobileCarousel = React.forwardRef<
         {itemsPerSlide === 1 ? (
           <div>{renderItem(currentItems[0], isTransitioning)}</div>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {currentItems.map((item, idx) => (
               <div key={idx}>{renderItem(item, isTransitioning)}</div>
             ))}
           </div>
         )}
       </div>
-
-      {/* Previous button */}
-      <button
-        onClick={() => {
-          const newIndex = (currentSlide - itemsPerSlide + items.length) % items.length;
-          handleSlideChange(newIndex);
-        }}
-        aria-label="Previous slide"
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-(--color-bg) hover:bg-(--color-text) hover:text-(--color-bg) text-(--color-text) rounded-full p-2 transition-colors opacity-75 hover:opacity-100"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button>
-
-      {/* Next button */}
-      <button
-        onClick={() => {
-          const newIndex = (currentSlide + itemsPerSlide) % items.length;
-          handleSlideChange(newIndex);
-        }}
-        aria-label="Next slide"
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-(--color-bg) hover:bg-(--color-text) hover:text-(--color-bg) text-(--color-text) rounded-full p-2 transition-colors opacity-75 hover:opacity-100"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </button>
 
       {/* Slide indicators/dots */}
       {totalSlides > 1 && (

@@ -42,6 +42,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features }) => {
         <MobileCarousel
           items={features}
           renderItem={(feature) => <FeatureCard feature={feature} />}
+          itemsPerSlide={2}
         />
       )}
 

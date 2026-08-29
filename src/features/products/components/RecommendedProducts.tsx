@@ -103,6 +103,7 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({
         <MobileCarousel
           items={products}
           renderItem={(product) => <ProductCard {...product} priority={false} />}
+          itemsPerSlide={2}
         />
       )}
 

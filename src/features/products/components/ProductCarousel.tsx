@@ -30,6 +30,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
             <ProductCard {...product} priority={true} />
           </div>
         )}
+        itemsPerSlide={2}
       />
     );
   }

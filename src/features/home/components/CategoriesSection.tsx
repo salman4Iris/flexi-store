@@ -70,6 +70,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({ categories }) => 
         <MobileCarousel
           items={categories}
           renderItem={(category) => <CategoryCard category={category} />}
+          itemsPerSlide={2}
         />
       )}
 
